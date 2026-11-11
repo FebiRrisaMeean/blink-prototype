@@ -1,0 +1,120 @@
+.market-app,.market-catalog,.market-catalog>div{position:absolute;inset:0;width:390px;height:844px;color:#fff}
+.market-filters{position:absolute;pointer-events:none}
+.market-catalog [data-name="Store top nav"],.market-catalog [data-name="Header"],.market-catalog [data-name="StatusBar"]{display:none}
+.market-fixed-header{position:absolute;z-index:12;inset:0 0 auto;height:125px;pointer-events:none}
+.market-header{position:absolute;left:0;right:0;top:47px;height:78px;padding:20px 16px;display:flex;align-items:center;justify-content:space-between}
+.market-header h1{font:600 36px/40px Montserrat,sans-serif;letter-spacing:-1.4px;margin:0}
+.market-balance{pointer-events:auto;display:flex;gap:8px;align-items:center;background:#ffffff1a;backdrop-filter:blur(12px);border-radius:16px;padding:4px 4px 4px 6px;color:#fff;font:600 20px/24px Montserrat,sans-serif;cursor:pointer}
+.market-balance>img{width:28px;height:28px}
+.market-plus{display:grid;place-items:center;background:#fff;width:32px;height:32px;margin-left:8px;border-radius:12px}
+.market-plus img{width:16px;height:16px}
+.market-catalog [data-name="tab group"]{display:none}
+.market-catalog [data-name="tab_bar + button_group"]{display:none}
+.market-categories{position:absolute;z-index:10;left:0;right:0;top:125px;height:54px;display:flex;gap:20px;align-items:center;overflow-x:auto;scrollbar-width:none;padding:8px 16px;background:#000}
+.market-categories a{flex:none;font:600 20px/24px Montserrat,sans-serif;color:#808080;padding:8px 0;border-radius:4px}
+.market-categories a[aria-current]{color:#fff}
+.market-categories a:focus-visible,.market-action:focus-visible{outline:2px solid #adff58;outline-offset:-3px}
+.market-catalog .market-catalog-scroll{position:absolute!important;top:179px!important;bottom:108px!important;left:0;right:0;height:auto!important;max-height:none;overflow-x:hidden!important;overflow-y:auto!important;padding-bottom:28px!important;scrollbar-width:none;overscroll-behavior:contain;justify-content:flex-start}
+.category-tails [data-name="Store top nav"],.category-gifts [data-name="Store top nav"]{top:23px}
+.category-tails [data-name="StatusBar"],.category-gifts [data-name="StatusBar"]{z-index:3}
+.market-catalog [data-name="Right Side"] img{filter:brightness(0) invert(1)}
+.market-catalog-scroll [data-name="item box"]{cursor:pointer;outline-offset:-4px}
+.category-maps .market-catalog-scroll{padding-top:0}
+.market-action{cursor:pointer}
+.market-catalog [data-name="1.1 : stars background"],.market-catalog [data-name="Background"],.market-catalog [data-name="gradik"],.market-catalog [data-name="gradik"] *, .market-catalog [data-node-id="123450:103523"]{pointer-events:none}
+.market-catalog [data-node-id="123450:103523"]{display:none}
+.market-catalog [data-node-id="95408:40003"]{display:none}
+.category-gifts [data-node-id="95408:39973"],.category-gifts [data-node-id="95408:39988"]{display:none}
+.market-item-sheet [data-name="Indicator"]{cursor:pointer;z-index:4;overflow:visible}
+.market-item-sheet [data-name="Indicator"]::after{content:'';position:absolute;top:0;left:140px;width:80px;height:24px}
+.market-unavailable{color:#808080!important;background:transparent!important;justify-content:center!important;font:700 15px Montserrat,sans-serif;text-transform:uppercase;cursor:default!important}
+.market-detail{position:absolute;z-index:70;inset:0;width:390px;height:844px;overflow:hidden;background:#000;border-radius:36px;color:#fff}
+.market-detail>div:first-child{width:390px;height:844px}
+.phone:has(.market-detail)>.tab-bar{display:none}
+.market-detail [data-name="Right Side"] img{filter:brightness(0) invert(1)}
+.market-dismiss{position:absolute;z-index:4;left:165px;top:86px;width:60px;height:24px;cursor:pointer;border-radius:12px;background:#000}
+.market-dismiss span{display:block;margin:auto;width:33px;height:4px;border-radius:20px;background:#808080}
+.market-dismiss:focus-visible{outline:2px solid #adff58}
+.market-item-sheet{max-height:758px;overflow-x:hidden;overflow-y:auto;scrollbar-width:none;overscroll-behavior:contain}
+.market-detail .market-source-cta{cursor:pointer}
+.market-detail .market-map-purchase{flex-direction:row;justify-content:space-between;padding:0 20px}
+.market-map-price{display:flex;align-items:center;gap:4px;color:#000;font:700 15px Montserrat,sans-serif}
+.market-map-price img{width:28px;height:28px}
+.category-maps [data-name="Title container"] p{text-shadow:-1.5px -1.5px #000,0 -1.5px #000,1.5px -1.5px #000,1.5px 0 #000,1.5px 1.5px #000,0 1.5px #000,-1.5px 1.5px #000,-1.5px 0 #000}
+.market-detail [data-name="HeaderView"]{height:auto;min-height:84px}
+.market-detail [data-name="HeaderView"] [data-name="Content"]{height:auto;min-height:56px;min-width:0}
+.market-detail [data-name="HeaderView"] p{white-space:normal;overflow-wrap:anywhere;max-width:100%}
+.market-carousel{position:absolute;left:24px;top:361px;width:342px;height:292px;pointer-events:none}
+.market-carousel>img{position:absolute;left:63px;top:24px;width:216px;height:216px;object-fit:contain;transform:rotate(10deg)}
+.market-pagination{position:absolute;bottom:16px;left:0;right:0;display:flex;gap:10px;justify-content:center;align-items:center;pointer-events:auto}
+.market-pagination button{width:8px;height:8px;position:relative;border:1px solid #ffffff40;border-radius:24px;background:#ffffff26;cursor:pointer}
+.market-pagination button::after{content:'';position:absolute;inset:-10px}
+.market-pagination button[aria-pressed="true"]{width:32px;background:#fff}
+.carousel-next{position:absolute;right:6px;top:110px;width:30px;height:44px;font-size:32px;color:#fff9;pointer-events:auto;cursor:pointer}
+.market-scrim{position:absolute;z-index:90;inset:0;background:#0009;display:flex;align-items:flex-end}
+.market-sheet{position:absolute;z-index:92;left:0;bottom:0;width:390px;max-height:760px;padding:36px 24px 56px;border-radius:40px 40px 0 0;background:#111;color:#fff;box-shadow:0 -10px 80px #0008;overflow-y:auto;font-family:Montserrat,sans-serif}
+.market-sheet h2{font-size:28px;line-height:34px;max-width:300px;margin:0 0 20px;text-transform:lowercase}
+.market-sheet p{font:500 16px/22px 'SF Pro Text',sans-serif;color:#aaa;margin:12px 0}
+.sheet-close{position:absolute;right:22px;top:16px;width:32px;height:32px;font-size:28px;line-height:32px;color:#999;cursor:pointer}
+.market-primary{width:100%;height:56px;border-radius:20px;background:white;color:#000;font:700 15px Montserrat,sans-serif;text-transform:uppercase;cursor:pointer;margin-top:20px}
+.market-total{display:flex;align-items:center;gap:8px;font:600 28px/34px Montserrat,sans-serif;margin:24px 0}
+.market-total img{width:28px;height:28px}
+.market-sheet .demo-note{color:#808080;font-size:14px;line-height:20px}
+.market-toast{position:absolute;z-index:100;left:24px;right:24px;bottom:112px;border:1px solid #ffffff26;border-radius:18px;background:#242424;padding:16px;text-align:center;font:600 15px/20px Montserrat,sans-serif;box-shadow:0 4px 24px #0008}
+.gift-dismiss{position:absolute;top:60px;right:16px;width:46px;height:46px;border:2px solid #242424;border-radius:12px;background:#000;color:#808080;font-size:32px;z-index:4;cursor:pointer}
+.gift-dismiss{display:grid;place-items:center}
+.gift-dismiss img{width:20px;height:20px}
+.gift-native-input{visibility:hidden}
+.gift-detail [data-node-id="99679:176768"]{min-height:44.76px}
+.gift-detail [data-name="Pattern fill"]{position:absolute;inset:0;width:100%;height:320px;pointer-events:none}
+.item-stickers [data-name="Pattern fill"]{position:absolute;inset:0;width:100%;height:292px;pointer-events:none}
+.gift-comment{position:absolute;left:24px;top:538px;width:342px;height:105px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:12px;padding:10px 16px 14px;display:flex;flex-direction:column;gap:4px;font:600 14px/17px 'SF Pro Text',sans-serif;color:#808080}
+.gift-comment span{display:flex;justify-content:space-between}.gift-comment small{font-size:12px}
+.gift-comment textarea{resize:none;width:100%;flex:1;min-height:0;background:none;color:#fff;font:500 17px/22px 'SF Pro Text',sans-serif;outline:none}
+.gift-toggle{position:absolute;left:313px;top:655px;width:53px;height:30px;border-radius:100px;background:#333;padding:4px;display:flex;cursor:pointer}
+.gift-toggle.is-on{justify-content:flex-end;background:linear-gradient(210deg,#aa94ed,#66faff)}
+.gift-toggle span{width:22px;height:22px;border-radius:50%;background:#000}
+.friend-picker{min-height:500px}
+.friend-picker input{width:100%;height:46px;border-radius:14px;background:#242424;color:#fff;padding:12px 16px;outline:none}
+.friend-picker-list{margin-top:20px}
+.friend-picker-list button{display:flex;align-items:center;width:100%;gap:12px;min-height:62px;text-align:left;cursor:pointer;font:600 17px Montserrat,sans-serif}
+.friend-picker-list img{width:40px;height:40px;border-radius:16px;object-fit:cover}
+.market-collection-host:empty{display:none}
+.category-tails .market-catalog-scroll,.category-stickers .market-catalog-scroll{display:grid;grid-template-columns:repeat(2,179px);gap:24px 0;justify-content:center;align-content:start}
+.category-tails .market-catalog-scroll>*,.category-stickers .market-catalog-scroll>*{grid-column:1/-1}
+:is(.category-tails,.category-stickers) .market-owned-row,:is(.category-tails,.category-stickers) .market-collection-host,:is(.category-tails,.category-stickers) .market-acquired,:is(.category-tails,.category-stickers) .market-acquired-grid{display:contents}
+:is(.category-tails,.category-stickers) .market-owned-row>*{width:179px;grid-column:auto}
+:is(.category-tails,.category-stickers) .market-acquired-card{grid-column:auto;height:184px}
+.market-collection-host{width:358px;flex:none}
+.market-acquired h2{font:600 20px/24px Montserrat,sans-serif;text-align:center;margin:12px 0 24px}
+.market-acquired-grid{display:grid;grid-template-columns:repeat(2,179px);row-gap:24px}
+.market-acquired-card{width:179px;height:192px;display:grid;place-items:center;overflow:hidden;border-radius:24px;cursor:pointer}
+.collection-art{position:relative;width:143px;height:152px}
+.collection-art>div:first-child{position:absolute;inset:0}
+.collection-sticker{position:absolute;left:20px;top:34px;width:104px;height:104px;object-fit:contain;transform:rotate(-5deg)}
+.collection-tail{position:absolute;left:21px;top:25px;width:100px;height:118px}
+.market-sheet-host{position:absolute;inset:0;pointer-events:none}
+.market-sheet-host>.market-sheet{pointer-events:auto}
+.phone:has(.market-scrim)>.tab-bar,.phone:has(.market-sheet[role="dialog"])>.tab-bar{visibility:hidden}
+.gift-main,.gift-main>div:first-child{width:390px;height:844px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,[role="button"]:focus-visible{outline:2px solid #adff58;outline-offset:2px}
+.recipient-screen{position:absolute;inset:0;z-index:95;width:390px;height:844px;background:#000;border-radius:36px;overflow:hidden;color:#fff}
+.recipient-screen>div:first-child{width:390px;height:844px}
+.recipient-screen [data-name="Search"]{display:none}
+.market-app .recipient-screen [data-name="Right Side"] img{filter:brightness(0)}
+.recipient-screen [data-node-id="104843:376028"]{top:138px;bottom:136px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.recipient-screen [data-name="ContactCard / Base"]{cursor:pointer}
+.recipient-screen [data-name="Slider"]{cursor:pointer;min-height:24px}
+.recipient-search{position:absolute;bottom:52px;left:16px;right:16px;display:flex;gap:10px;z-index:3;padding-top:24px;background:linear-gradient(transparent,#000 24px);font:600 20px/24px Montserrat,sans-serif}
+.recipient-search label{display:flex;align-items:center;gap:8px;background:#ffffff26;border:2px solid #ffffff50;border-radius:14px;padding:8px 12px;height:46px;flex:1;min-width:0}
+.recipient-search label>img,.recipient-search button img{width:20px;height:20px;flex:none}
+.recipient-search input{width:100%;min-width:0;background:none;color:#fff;outline:none;font:inherit}
+.recipient-search button{width:47px;height:47px;border:2px solid #ffffff26;background:#ffffff1a;border-radius:14px;display:grid;place-items:center;cursor:pointer}
+.recipient-empty{position:absolute;top:200px;left:16px;right:16px;text-align:center;font:500 17px 'SF Pro Text',sans-serif;color:#808080}
+.recipient-screen[data-empty="true"] [data-node-id="104843:376028"]{display:none}
+.coin-detail{z-index:91;background:#000}
+.coin-colored{position:absolute;inset:0;background:linear-gradient(120deg,#d377ff,#a5abff,#77deff)}
+.coin-scroll{position:absolute;top:74px;left:0;width:390px;bottom:34px;overflow:auto;scrollbar-width:none;border-radius:40px 40px 0 0;background:#000;padding-bottom:24px}
+.coin-scroll [data-name="Indicator"]{cursor:pointer;min-height:24px}
+.coin-scroll [data-name="glyph/about/32"]{cursor:pointer}
+.market-back{display:block;margin:16px auto 0;color:#aaa;font:600 15px Montserrat,sans-serif;cursor:pointer}

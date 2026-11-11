@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="56" height="60" viewBox="0 0 56 60" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Form">
+<use xlink:href="#stroke0_0_207" fill="#494949"/>
+<mask id="stroke1_0_207" fill="white">
+<use xlink:href="#stroke0_0_207"/>
+</mask>
+<path d="M0 24C0 10.7452 10.7452 0 24 0H32C45.2548 0 56 10.7452 56 24V32C56 45.0218 45.6293 55.6214 32.6967 55.9901C32.3952 56.3157 32.0833 56.6703 31.7674 57.0294C30.4933 58.4777 29.1542 60 28.1663 60C27.322 60 26.0767 58.6633 24.7689 57.2596C24.3712 56.8328 23.9678 56.3997 23.5681 55.9962C10.5125 55.7658 0 45.1106 0 32V24Z" stroke-width="2" stroke="black" mask="url(#stroke1_0_207)"/>
+</g>
+<defs>
+<path id="stroke0_0_207" d="M24 0C10.7452 0 0 10.7452 0 24V32C0 45.1106 10.5125 55.7658 23.5681 55.9962C23.9678 56.3997 24.3712 56.8328 24.7689 57.2596C26.0767 58.6633 27.322 60 28.1663 60C29.1542 60 30.4933 58.4777 31.7674 57.0294C32.0833 56.6703 32.3952 56.3157 32.6967 55.9901C45.6293 55.6214 56 45.0218 56 32V24C56 10.7452 45.2548 0 32 0H24Z" fill-rule="evenodd" clip-rule="evenodd"/>
+</defs>
+</svg>

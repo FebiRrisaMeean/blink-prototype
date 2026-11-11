@@ -1,0 +1,22 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="13.9853" viewBox="0 0 16 13.9853" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Vector">
+<use xlink:href="#stroke0_0_2991" fill="url(#paint0_radial_0_2991)"/>
+<use xlink:href="#stroke0_0_2991" fill="url(#paint1_radial_0_2991)"/>
+<mask id="stroke1_0_2991" fill="white">
+<use xlink:href="#stroke0_0_2991"/>
+</mask>
+<path d="M11.2987 0C9.64736 0 8.60496 0.80368 8 1.5304C7.39504 0.80368 6.3528 0 4.7008 0C1.8888 0 0 2.60496 0 5.03776C0 8.57936 6.80288 13.3259 7.57856 13.8554C7.7056 13.9419 7.8528 13.9853 8 13.9853C8.1472 13.9853 8.2944 13.9419 8.42144 13.8554C9.19712 13.3259 16 8.57936 16 5.03776C16 2.60496 14.1109 0 11.2987 0Z" stroke-width="4" stroke="white" mask="url(#stroke1_0_2991)"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_2991" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(10.6667 3.33333) rotate(124.16) scale(11.2793 7.46024)">
+<stop stop-color="#51FD65"/>
+<stop offset="0.605989" stop-color="#4FE5D8"/>
+<stop offset="1" stop-color="#FF6ADE"/>
+</radialGradient>
+<radialGradient id="paint1_radial_0_2991" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(10.6667 3.33333) rotate(124.16) scale(11.2793 7.46024)">
+<stop offset="0.316742" stop-color="#30E593"/>
+<stop offset="0.828099" stop-color="#FF6AC8"/>
+</radialGradient>
+<path id="stroke0_0_2991" d="M11.2987 0C9.64736 0 8.60496 0.80368 8 1.5304C7.39504 0.80368 6.3528 0 4.7008 0C1.8888 0 0 2.60496 0 5.03776C0 8.57936 6.80288 13.3259 7.57856 13.8554C7.7056 13.9419 7.8528 13.9853 8 13.9853C8.1472 13.9853 8.2944 13.9419 8.42144 13.8554C9.19712 13.3259 16 8.57936 16 5.03776C16 2.60496 14.1109 0 11.2987 0Z"/>
+</defs>
+</svg>

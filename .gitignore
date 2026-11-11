@@ -1,0 +1,15 @@
+node_modules/
+.sites-runtime/
+.generated/
+site.tar.gz
+*.log
+.pages/
+.tools/
+.DS_Store
+.env
+.env.*
+*.zip
+dist/app.js
+dist/app.js.map
+dist/figma.css
+class-report.json

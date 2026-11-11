@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="172.8" height="175.8" viewBox="0 0 172.8 175.8" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="image_stars_profile_light" filter="url(#filter0_f_0_743)">
+<path d="M100.9 104.9L54.0931 155.4V117.9L20.4 114.4L71.4414 82.9L23.4 43.9L66.5483 51.9175L71.4414 27.2288L95.4621 40.3611L117.703 20.4V56.1198L152.4 68.2016L121.262 90.2638L132.828 140.692L100.9 104.9Z" fill="url(#paint0_radial_0_743)"/>
+</g>
+<defs>
+<filter id="filter0_f_0_743" x="0" y="0" width="172.8" height="175.8" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="10.2" result="effect1_foregroundBlur_0_743"/>
+</filter>
+<radialGradient id="paint0_radial_0_743" cx="0" cy="0" r="1" gradientTransform="matrix(67.725 100.575 -68.7578 7.17328 53.715 44.025)" gradientUnits="userSpaceOnUse">
+<stop offset="0.340819" stop-color="#C343FF"/>
+<stop offset="1" stop-color="#779BFF"/>
+</radialGradient>
+</defs>
+</svg>

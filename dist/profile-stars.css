@@ -1,0 +1,13 @@
+.profile-stars-screen{position:relative;width:390px;height:844px;overflow:clip;color:white;background:#0d0e1a}
+.profile-stars-screen>div:first-child{width:390px;height:844px;overflow:clip}
+.profile-stars-screen [data-name="Space"]{background-size:1530.326906px 832px;background-position:top left}
+.profile-stars-screen [data-name="Gradient"]{mask-image:url('./profile-assets/b3405.svg');mask-size:390px 844px;mask-repeat:no-repeat}
+.profile-stars-screen [data-name="gradient bottom"],.profile-stars-screen [data-name="gradient top"]{mask-image:none!important}
+.profile-stars-screen [data-name="Party"]{overflow:hidden;border-radius:40px 40px 0 0;background:black}
+.profile-stars-screen [data-name="FriendList"]{left:0;right:0;bottom:34px;overflow:auto;scrollbar-width:none;overscroll-behavior:contain;padding-bottom:12px}
+.profile-stars-screen [data-name="Tabs"]{z-index:2}
+.profile-stars-screen [data-name="HomeIndicator"]{pointer-events:none}
+.stars-action{cursor:pointer}
+.stars-action:focus-visible{outline:2px solid #b0d8ff;outline-offset:-2px;border-radius:8px}
+.stars-friend-avatar{width:56px;height:56px;border-radius:16px;object-fit:cover}
+.stars-notice{position:absolute;z-index:5;top:125px;left:50%;transform:translateX(-50%);max-width:358px;padding:12px 18px;border-radius:16px;background:#242424;color:white;text-align:center;font:600 15px/20px 'SF Pro Text',sans-serif;box-shadow:0 4px 20px #0006}

@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="56" height="60" viewBox="0 0 56 60" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Form">
+<use xlink:href="#stroke0_0_199" fill="white"/>
+<mask id="stroke1_0_199" fill="white">
+<use xlink:href="#stroke0_0_199"/>
+</mask>
+<path d="M32 0C45.2548 0 56 10.7452 56 24V32C56 45.0213 45.6301 55.6188 32.6982 55.9883C31.1802 57.6274 29.3992 60 28.166 60C27.0643 59.9996 25.2793 57.7249 23.5645 55.9941C10.5106 55.7618 1.27445e-07 45.1093 0 32V24C0 10.7452 10.7452 1.28852e-07 24 0H32Z" stroke-width="2" stroke="black" mask="url(#stroke1_0_199)"/>
+</g>
+<defs>
+<path id="stroke0_0_199" d="M32 0C45.2548 0 56 10.7452 56 24V32C56 45.0213 45.6301 55.6188 32.6982 55.9883C31.1802 57.6274 29.3992 60 28.166 60C27.0643 59.9996 25.2793 57.7249 23.5645 55.9941C10.5106 55.7618 1.27445e-07 45.1093 0 32V24C0 10.7452 10.7452 1.28852e-07 24 0H32Z"/>
+</defs>
+</svg>

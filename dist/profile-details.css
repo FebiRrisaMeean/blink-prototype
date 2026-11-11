@@ -1,0 +1,17 @@
+.profile-friends-trigger{display:block;flex:none;width:140px;height:146px;border-radius:20px;cursor:pointer}
+.profile-friends-trigger:focus-visible,[data-profile-open]:focus-visible{outline:2px solid white;outline-offset:4px}
+[data-profile-open]{cursor:pointer}
+.profile-detail-layer,.profile-detail-content,.profile-detail-content>div{position:absolute;inset:0;width:390px;height:844px}
+.profile-detail-layer{z-index:80;outline:none;overflow:hidden}
+.profile-detail-action{cursor:pointer}
+.profile-detail-action:focus-visible{outline:2px solid #b0d8ff;outline-offset:3px}
+.profile-views-screen{color:black;background:white}
+.profile-views-screen [data-node-id="45225:93674"] p,.profile-views-screen [data-node-id="45225:93675"] p,.profile-views-screen [data-node-id="45225:93676"] p{-webkit-text-stroke:16px white;paint-order:stroke fill;filter:drop-shadow(0 1px 1px #0005)}
+.profile-views-help{position:absolute;inset:0;z-index:2;background:#0008;backdrop-filter:blur(10px);color:white;outline:none}
+.profile-views-help>div{height:844px;pointer-events:none}
+.profile-views-help [data-name="Sheet"]{pointer-events:auto}
+.profile-views-help [data-name="Show/Hide Image"]{display:inline-grid;grid-template-columns:max-content;grid-template-rows:max-content;place-items:start}
+.profile-views-help [data-name="ProfileViews"]{grid-column:1;grid-row:1}
+.profile-avatar-screen{background:#000;color:white}
+.profile-avatar-screen [data-node-id="59228:562009"],.profile-avatar-screen [data-node-id="59228:562025"]{visibility:hidden}
+.profile-avatar-screen [data-name="Nickname"]{pointer-events:none}

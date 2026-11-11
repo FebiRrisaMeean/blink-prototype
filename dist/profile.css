@@ -1,0 +1,90 @@
+.profile-depth{position:relative;width:390px;height:844px;color:white}
+.profile-depth>div:first-child,.profile-depth>div:first-child>div{width:390px;height:844px}
+.profile-edit-trigger{cursor:pointer;border-radius:12px}
+.profile-edit-trigger:focus-visible{outline:2px solid white;outline-offset:3px}
+.profile-depth [data-name="ProfileBio"] p{white-space:pre-line;overflow-wrap:anywhere}
+.profile-depth [data-name="Name"]>p{width:100%;min-width:0;overflow-wrap:anywhere}
+.profile-editor{position:absolute;inset:0;z-index:80;background:radial-gradient(ellipse at 0 0,#d377ff 0%,#a5abff 67%,#77deff 100%);color:#fff}
+.phone:has(.profile-editor-open)>.tab-bar{visibility:hidden}
+.profile-editor-status{position:absolute;inset:0 0 auto;height:47px;color:#000;z-index:3;pointer-events:none}
+.profile-editor-status>span{position:absolute;left:27px;top:15px;width:54px;text-align:center;font:600 17px/22px 'SF Pro Text',sans-serif;letter-spacing:-.408px}
+.profile-system-icons{position:absolute;right:26.6px;top:19px}
+.profile-editor-sheet{position:absolute;left:0;right:0;top:56px;bottom:0;background:#000;border-radius:40px 40px 0 0;overflow:hidden}
+.profile-sheet-handle{position:absolute;top:8px;width:33px;height:4px;left:calc(50% - 16.5px);border-radius:20px;background:#808080}
+.profile-editor-scroll{height:100%;overflow:auto;scrollbar-width:none;padding:52px 0 145px;overscroll-behavior:contain}
+.profile-avatar-edit{display:block;position:relative;width:110px;height:110px;overflow:hidden;border-radius:22px;margin:0 auto 36px;cursor:pointer}
+.profile-avatar-edit>img{width:110px;height:110px;object-fit:cover}
+.profile-avatar-edit>span{position:absolute;bottom:9px;left:0;right:0;background:#fff;color:#000;text-align:center;padding:8px 0;font:700 12px/15px Montserrat,sans-serif;text-transform:uppercase}
+.profile-fields{display:flex;flex-direction:column;gap:16px;padding:0 16px}
+.profile-field{display:block;padding:10px 15px 13px;border:1px solid #2b2b2b;border-radius:12px;background:#1c1c1c}
+.profile-field:focus-within{border-color:white}
+.profile-field-caption{display:flex;justify-content:space-between;gap:8px;font:600 14px/17px 'SF Pro Text',sans-serif;color:#808080;margin-bottom:4px}
+.profile-field-caption>span:last-child{font-weight:400;visibility:hidden}
+.profile-field:focus-within .profile-field-caption>span:last-child,.profile-field-error .profile-field-caption>span:last-child{visibility:visible}
+.profile-field input,.profile-field textarea{display:block;resize:none;background:none;color:#fff;width:100%;padding:0;margin:0;outline:none;border:0;font:400 17px/20.4px 'SF Pro Text',sans-serif;letter-spacing:-.17px;min-height:20px}
+.profile-field textarea{overflow:hidden;min-height:40.8px}
+.profile-field input::placeholder,.profile-field textarea::placeholder{color:#494949}
+.profile-field-error{border-color:#ff545c}.profile-field-error .profile-field-caption{color:#ff545c}
+.profile-selectors{margin-top:24px}
+.profile-selector{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:16px;min-height:56px;cursor:pointer;font:600 15px/18px Montserrat,sans-serif;text-align:left}
+.profile-selector>span{display:flex;align-items:center;gap:12px}
+.profile-selector>span:first-child>img{flex:none}
+.profile-selector>span:last-child{gap:10px;color:#808080}
+.profile-selector>span:last-child>img{opacity:.8}
+.profile-selector:disabled{cursor:default}
+.profile-selector:disabled>span:first-child>img{margin:0 2px}
+.profile-selector .profile-accent{color:#b0d8ff}
+.profile-close-gradient{position:absolute;bottom:0;left:0;right:0;height:128px;background:linear-gradient(0deg,#000 0%,#000 50%,transparent 100%);pointer-events:none;display:flex;justify-content:center;align-items:flex-start;padding-top:18px}
+.profile-close{width:46px;height:46px;display:grid;place-items:center;border:1px solid #e4e4e4;border-radius:12px;background:linear-gradient(#ebebeb 26%,#b2b2b2);pointer-events:auto;cursor:pointer}
+.profile-editor-home{position:absolute;z-index:7;left:128px;bottom:8px;background:#fff;border-radius:100px;width:134px;height:5px;pointer-events:none}
+.profile-child-layer{position:absolute;inset:0;z-index:4}
+.profile-child-backdrop{position:absolute;inset:0;background:radial-gradient(ellipse at 0 0,#d377ffe6 0%,#a5abffe6 67%,#77deffe6 100%);cursor:pointer}
+.profile-gender-sheet,.profile-birthday-sheet{position:absolute;left:0;right:0;bottom:0;background:#000;border-radius:40px 40px 0 0}
+.profile-gender-sheet{height:400px;padding:32px 16px 56px}
+.profile-gender-sheet h2,.profile-birthday-sheet h2{font:700 28px/34px Montserrat,sans-serif;text-align:center}
+.profile-gender-options{display:flex;gap:12px;height:142px;margin:32px 0 48px}
+.profile-gender-options button{display:grid;place-items:center;flex:1;border:1px solid #2b2b2b;border-radius:20px;background:#1c1c1c;cursor:pointer}
+.profile-gender-options button.selected{border-color:white}
+.profile-gender-options img{width:48px;height:48px;object-fit:cover}
+.profile-primary{display:flex;align-items:center;justify-content:center;width:100%;height:56px;border-radius:20px;background:white;color:black;font:700 15px/18px Montserrat,sans-serif;text-transform:uppercase;cursor:pointer}
+.profile-primary:disabled{opacity:.5;cursor:default}
+.profile-birthday-sheet{top:222px;padding-top:32px}
+.profile-birthday-sheet>p{margin-top:12px;text-align:center;color:#808080;font:600 15px/18px Montserrat,sans-serif}
+.profile-date-fields{position:absolute;left:53px;right:53px;top:144px;display:flex;gap:10px}
+.profile-date-fields input{width:88px;height:60px;background:#1c1c1c;border:1px solid #2b2b2b;border-radius:12px;outline:none;text-align:center;font:600 24px/29px Montserrat,sans-serif;color:#fff;padding:0}
+.profile-date-fields input::placeholder{color:#808080}
+.profile-date-fields input.selected{border-color:white}
+.profile-date-save{position:absolute;left:16px;right:16px;top:260px;width:358px}
+.profile-date-error{position:absolute;top:216px;left:16px;right:16px;text-align:center;font-size:14px;color:#ff545c}
+.profile-keyboard{position:absolute;left:0;right:0;top:332px;bottom:0;padding:6px 6px 78px;background:#d1d3d9;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,46px);gap:7px 5px;color:black}
+.profile-keyboard button{border-radius:5px;background:white;box-shadow:0 1px 0 #898b8f;font:400 26px/29px 'SF Pro Text',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.profile-keyboard small{font-size:9px;line-height:10px;letter-spacing:2px;font-weight:600}
+.profile-keyboard .profile-delete-key{background:transparent;box-shadow:none;font-size:27px}
+.profile-avatar-error{color:#ff545c;font-size:14px;text-align:center;margin:-25px 16px 14px}
+.profile-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.profile-editor button:focus-visible{outline:2px solid #b0d8ff;outline-offset:3px}
+.profile-pin-layer [data-profile-pin]{width:390px;height:844px}
+.profile-pin-layer [data-node-id="89016:30869"],.profile-pin-layer [data-node-id="89016:30882"]{border:1px solid #2b2b2b;cursor:pointer}
+.profile-pin-layer [data-selected="стандарт"] [data-node-id="89016:30869"],.profile-pin-layer [data-selected="трях фест"] [data-node-id="89016:30882"]{border:3px solid #fff}
+.profile-pin-layer [role="button"]:focus-visible{outline:2px solid #b0d8ff;outline-offset:3px}
+.profile-pin-return{position:absolute;z-index:4;left:0;top:56px;width:390px;height:28px;border-radius:40px 40px 0 0;cursor:pointer}
+.profile-checkins-trigger{position:relative;display:block;width:144px;height:168px;flex:none;cursor:pointer;border-radius:20px}
+.profile-checkins-trigger:focus-visible{outline:2px solid white;outline-offset:5px}
+.profile-checkins-layer{position:absolute;inset:0;z-index:80;outline:none;color:white}
+.profile-checkins-layer>div{width:390px;height:844px;overflow:hidden}
+.profile-checkins-layer [data-node-id="43230:264135"]{left:16px;right:16px;bottom:34px;overflow:auto;scrollbar-width:none;overscroll-behavior:contain;padding-bottom:16px}
+.profile-checkins-return{position:absolute;z-index:4;left:0;top:56px;width:390px;height:28px;border-radius:40px 40px 0 0;cursor:pointer}
+.profile-checkins-return:focus-visible{outline:2px solid #b0d8ff;outline-offset:-3px}
+.profile-customize-trigger{cursor:pointer;border-radius:12px}
+.profile-customize-trigger:focus-visible{outline:2px solid white;outline-offset:3px}
+.profile-cover-editor{position:absolute;inset:0;z-index:80;color:white;outline:none}
+.profile-cover-preview,.profile-cover-preview>div{position:absolute;inset:0;width:390px;height:844px;pointer-events:none}
+.profile-cover-preview [data-node-id="118790:104365"]{visibility:hidden}
+.profile-cover-shade{position:absolute;left:0;right:0;top:240px;bottom:0;background:linear-gradient(transparent,#000e 27.619%)}
+.profile-cover-actions{position:absolute;left:16px;right:16px;top:724px;display:flex;gap:16px}
+.profile-cover-actions button{height:56px;flex:1;min-width:0;border-radius:20px;backdrop-filter:blur(8px);background:#242424;color:white;font:700 15px/18px Montserrat,sans-serif;text-transform:uppercase;cursor:pointer}
+.profile-cover-actions button:last-child{background:white;color:black}
+.profile-cover-color-fill{position:absolute;inset:0;z-index:1;border:3px solid white;border-radius:50%;pointer-events:none}
+.profile-cover-color-input{position:absolute;inset:-5px;z-index:2;width:36px;height:36px;opacity:0;cursor:pointer}
+.profile-cover-editor [data-name="BtnRandom"]{cursor:pointer}
+.profile-cover-editor button:focus-visible,.profile-cover-editor [data-name="BtnRandom"]:focus-visible,.profile-cover-editor [data-name^="color"]:has(input:focus-visible)>.profile-cover-color-fill{outline:2px solid white;outline-offset:4px}

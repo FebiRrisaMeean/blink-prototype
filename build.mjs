@@ -84,4 +84,8 @@ await fs.writeFile('dist/figma.css',rules);
 await fs.writeFile('class-report.json',JSON.stringify({count:classes.size,unsupported:[...unknown]},null,2));
 if(unknown.size)console.log('Unmapped design utilities: '+[...unknown].join(', '));
 await build({entryPoints:['app.jsx'],bundle:true,outfile:'dist/app.js',minify:true,jsx:'automatic',sourcemap:true,target:'es2022'});
+const baseHtml = await fs.readFile('dist/index.html', 'utf8');
+await fs.writeFile('dist/seasonal-map.html', baseHtml
+  .replace('</head>', '  <link rel="stylesheet" href="./seasonal-assets/vip.css">\n</head>')
+  .replace('<body>', '<body data-variant="seasonal">'));
 console.log('Built '+files.length+' source modules and '+classes.size+' style rules');

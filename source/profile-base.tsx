@@ -305,7 +305,7 @@ function ImageYourProfileBg({ className }: { className?: string }) {
   );
 }
 
-export default function Component({onEdit, onCheckins, onCustomize, onOpen, profile}: {onOpen?: (screen:string) => void, onCustomize: () => void, onEdit: () => void, onCheckins: () => void, profile: {nickname: string, name: string, bio: string, avatar: string, coverStyle?: string}}) {
+export default function Component({onEdit, onCheckins, onCustomize, onOpen, onSettings, profile}: {onSettings: () => void, onOpen?: (screen:string) => void, onCustomize: () => void, onEdit: () => void, onCheckins: () => void, profile: {nickname: string, name: string, bio: string, avatar: string, coverStyle?: string}}) {
   return (
     <div className="bg-black overflow-clip relative rounded-[40px] size-full" data-node-id="118790:104360" data-name="свой профиль">
       <button className="absolute block cursor-pointer h-[844px] left-0 right-0 top-0" data-node-id="118790:104361" style={{ backgroundImage: profile.coverStyle || "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 390 844' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(17.25 25.45 -26.598 18.028 60 38.5)'><stop stop-color='rgba(240,255,81,1)' offset='0'/><stop stop-color='rgba(216,247,124,1)' offset='0.09625'/><stop stop-color='rgba(191,239,168,1)' offset='0.1925'/><stop stop-color='rgba(167,231,211,1)' offset='0.28875'/><stop stop-color='rgba(142,223,255,1)' offset='0.385'/><stop stop-color='rgba(119,152,255,1)' offset='0.6925'/><stop stop-color='rgba(108,117,255,1)' offset='0.84625'/><stop stop-color='rgba(96,82,255,1)' offset='1'/></radialGradient></defs></svg>\")" }} data-name="image_your_profile_cover" />
@@ -528,7 +528,7 @@ export default function Component({onEdit, onCheckins, onCustomize, onOpen, prof
             <button type="button" className={'profile-customize-trigger'} onClick={onCustomize} aria-label="Оформить обложку профиля"><SquareBtn40 className="backdrop-blur-[10px] bg-[rgba(0,0,0,0.25)] relative rounded-[12px] shrink-0 size-[40px]" set="Customize" /></button>
             <button type="button" onClick={onEdit} aria-label="Редактировать профиль" className={'profile-edit-trigger'}><SquareBtn40 className="backdrop-blur-[10px] bg-[rgba(0,0,0,0.25)] relative rounded-[12px] shrink-0 size-[40px]" /></button>
           </div>
-          <SquareBtn40 className="backdrop-blur-[10px] bg-[rgba(0,0,0,0.25)] relative rounded-[12px] shrink-0 size-[40px]" set="Settings" />
+          <button type="button" className={'profile-settings-trigger'} aria-label="Настройки" onClick={onSettings}><SquareBtn40 className="backdrop-blur-[10px] bg-[rgba(0,0,0,0.25)] relative rounded-[12px] shrink-0 size-[40px]" set="Settings" /></button>
         </div>
       </div>
       <div className="absolute bottom-0 h-[34px] left-0 right-0" data-node-id="118790:104372" data-name="HomeIndicator">

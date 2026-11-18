@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="glyph_location_outline_24">
+<path id="Vector" d="M22 2L2 11.174H12.4167C12.5272 11.174 12.6332 11.2179 12.7113 11.296C12.7894 11.3741 12.8333 11.4801 12.8333 11.5906V22L22 2Z" stroke="url(#paint0_linear_0_1168)" stroke-width="1.81818" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_1168" x1="2" y1="10.0587" x2="20.2751" y2="4.44416" gradientUnits="userSpaceOnUse">
+<stop stop-color="#59C3FF"/>
+<stop offset="1" stop-color="#A736FF"/>
+</linearGradient>
+</defs>
+</svg>

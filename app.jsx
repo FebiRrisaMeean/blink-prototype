@@ -9,33 +9,41 @@ import Recommendations from './.generated/recommendations.tsx';
 import FriendActions from './.generated/friendactions.tsx';
 import FriendTitle from './.generated/friendtitle.tsx';
 import FriendsGlow from './.generated/glow.tsx';
+import {currentPermanentStyle, appliedMapImages, MapStyleSettings, SettingsIndex, setPermanentStyle, StatusBar, styleNames} from './map-styles.jsx';
+import {SeasonalApplyMessage, SeasonalControls, useSeasonalScenario} from './variants/seasonal-map/seasonal.jsx';
+import {readWallet, saveWallet, product} from './market-model.mjs';
 
 const tabs=[
   {id:'map',label:'карта',icon:'2b6a7.svg',pin:true},
   {id:'friends',label:'друзья',icon:'5f2ba.svg'},
   {id:'chats',label:'чаты',icon:'abe54.svg'},
-  {id:'market',label:'маркет',icon:'c0ac6.svg'},
+  {id:'market',label:'маркет',icon:'c0ac6.svg',activeIcon:'map-style-market-tab-active.svg'},
   {id:'profile',label:'ты',icon:'dc87c.png',avatar:true}
 ];
-const current=()=>{const id=location.hash.replace(/^#\/?/,'').split('/')[0];return tabs.some(t=>t.id===id)?id:'map';};
+const readRoute=()=>location.hash || '#/map';
 function TabBar({active}){
-  return <nav className="tab-bar" aria-label="Основные разделы">{tabs.map(tab=><a key={tab.id} href={'#/'+tab.id} aria-current={tab.id===active?'page':undefined} className={'tab-item '+(tab.id===active?'selected':'')} aria-label={tab.label}><span className={'tab-icon '+(tab.pin?'pin-icon':'')+(tab.avatar?' avatar-icon':'')}><img src={'./assets/'+tab.icon} alt="" /></span><span>{tab.label}</span></a>)}</nav>;
+  return <nav className="tab-bar" aria-label="Основные разделы">{tabs.map(tab=>{
+    const selected=tab.id===active;
+    const icon=selected && tab.activeIcon || tab.icon;
+    return <a key={tab.id} href={'#/'+tab.id} aria-current={selected?'page':undefined} className={'tab-item '+(selected?'selected':'')} aria-label={tab.label}><span className={'tab-icon '+(tab.pin?'pin-icon':'')+(tab.avatar?' avatar-icon':'')}><img src={'./assets/'+icon} alt="" /></span><span>{tab.label}</span></a>;
+  })}</nav>;
 }
-function StatusBar(){
-  return <div className="status-bar"><span className="time">4:20</span><span className="brand"><img src="./assets/f548a.svg" alt="Blink"/></span><img className="system-icons" src="./assets/2f068.svg" alt=""/></div>;
-}
-function InteractiveMap(){
+function InteractiveMap({style, theme}){
   const [position,setPosition]=useState({x:0,y:0});
   const gesture=useRef(null);
-  const clamp=(x,y)=>({x:Math.max(-692,Math.min(343,x)),y:Math.max(-115,Math.min(115,y))});
-  return <div className="interactive-map" tabIndex={0} aria-label="Карта, перетащите для перемещения" style={{'--map-x':position.x+'px','--map-y':position.y+'px'}}
-    onPointerDown={e=>{if(e.button!==0||e.target.closest('[data-name="top"],[data-name="tab_bar + button_group"],[data-name="StatusBar"],[data-name="MapLogoDark"],[data-name="HomeIndicator"]'))return;const scale=e.currentTarget.getBoundingClientRect().width/390;gesture.current={id:e.pointerId,x:e.clientX,y:e.clientY,position,scale};e.currentTarget.setPointerCapture(e.pointerId);e.currentTarget.classList.add('dragging');e.preventDefault();}}
+  const xLimit=style==='gta'?40:style==='seasonal'?130:null;
+  const yLimit=style==='standard'?115:35;
+  const clamp=(x,y)=>({x:Math.max(-(xLimit??692),Math.min(xLimit??343,x)),y:Math.max(-yLimit,Math.min(yLimit,y))});
+  const offset=clamp(position.x,position.y);
+  useEffect(()=>{setPosition({x:0,y:0});},[style]);
+  return <div className="interactive-map" tabIndex={0} aria-label="Карта, перетащите для перемещения" data-style={style} data-theme={theme} style={{'--map-x':offset.x+'px','--map-y':offset.y+'px'}}
+    onPointerDown={e=>{if(e.button!==0||e.target.closest('[data-name="top"],[data-name="tab_bar + button_group"],[data-name="StatusBar"],[data-name="MapLogoDark"],[data-name="HomeIndicator"]'))return;const scale=e.currentTarget.getBoundingClientRect().width/390;gesture.current={id:e.pointerId,x:e.clientX,y:e.clientY,position:offset,scale};e.currentTarget.setPointerCapture(e.pointerId);e.currentTarget.classList.add('dragging');e.preventDefault();}}
     onPointerMove={e=>{const g=gesture.current;if(g&&g.id===e.pointerId)setPosition(clamp(g.position.x+(e.clientX-g.x)/g.scale,g.position.y+(e.clientY-g.y)/g.scale));}}
     onLostPointerCapture={e=>{gesture.current=null;e.currentTarget.classList.remove('dragging');}}
     onPointerUp={e=>{if(e.currentTarget.hasPointerCapture(e.pointerId))e.currentTarget.releasePointerCapture(e.pointerId);}}
     onPointerCancel={e=>{gesture.current=null;e.currentTarget.classList.remove('dragging');}}
     onKeyDown={e=>{const delta={ArrowLeft:[40,0],ArrowRight:[-40,0],ArrowUp:[0,40],ArrowDown:[0,-40]}[e.key];if(delta){e.preventDefault();setPosition(p=>clamp(p.x+delta[0],p.y+delta[1]));}else if(e.key==='Home'){e.preventDefault();setPosition({x:0,y:0});}}}>
-    <MapScreen/>
+    <MapScreen artwork={appliedMapImages[style]}/>
   </div>;
 }
 function FriendsScreen({active}){
@@ -72,25 +80,56 @@ function FriendsScreen({active}){
     <div className="home-indicator"/>
   </div>;
 }
-function useFit(){
+function useFit(seasonal){
   const [scale,setScale]=useState(1);
-  useEffect(()=>{const fit=()=>setScale(Math.min(innerWidth/390,innerHeight/844,1));fit();addEventListener('resize',fit);return()=>removeEventListener('resize',fit);},[]);
+  useEffect(()=>{const fit=()=>setScale(Math.min(innerWidth/390,(innerHeight-(seasonal&&innerWidth<=840?42:0))/844,1));fit();addEventListener('resize',fit);return()=>removeEventListener('resize',fit);},[seasonal]);
   return scale;
 }
 function App(){
-  const [active,setActive]=useState(current);
-  const scale=useFit();
-  useEffect(()=>{const update=()=>setActive(current());addEventListener('hashchange',update);if(!location.hash)history.replaceState(null,'','#/map');return()=>removeEventListener('hashchange',update);},[]);
+  const [route,setRoute]=useState(readRoute);
+  const [page,subpage,origin]=route.replace(/^#\/?/,'').split('/');
+  const active=tabs.some(t=>t.id===page)?page:'map';
+  const seasonal=document.body.dataset.variant==='seasonal';
+  const themeKey=seasonal?'blink-seasonal-theme-v1':'blink-map-theme-v1';
+  const [theme,setTheme]=useState(()=>{
+    try {const saved=localStorage.getItem(themeKey);if (['light','dark','system'].includes(saved))return saved;} catch {}
+    return 'light';
+  });
+  const walletKey=seasonal?'blink-market-seasonal-v1':undefined;
+  const [wallet,setWallet]=useState(()=>readWallet(localStorage,walletKey));
+  const scenario=useSeasonalScenario(seasonal);
+  const selected=scenario.applied?'seasonal':currentPermanentStyle(wallet);
+  const styleOverlay=active==='profile'&&['map-style','settings'].includes(subpage);
+  const scale=useFit(seasonal);
+  const returnTo=origin==='market'?'#/market/maps/seasonal':origin==='edit'?'#/profile':'#/profile/settings';
+  function selectPermanent(style) {
+    scenario.deselect();
+    setWallet(previous=>setPermanentStyle(previous,style));
+  }
+  function selectStyle(style) {
+    if (style==='seasonal') scenario.apply();
+    else selectPermanent(style);
+  }
+  useEffect(()=>{const update=()=>setRoute(readRoute());addEventListener('hashchange',update);if(!location.hash)history.replaceState(null,'','#/map');return()=>removeEventListener('hashchange',update);},[]);
+  useEffect(()=>{try {localStorage.setItem(themeKey,theme);} catch {}},[theme,themeKey]);
+  useEffect(()=>{saveWallet(localStorage,wallet,walletKey);},[wallet,walletKey]);
   useEffect(()=>{document.title='Blink — '+tabs.find(t=>t.id===active).label;},[active]);
-  return <main className="stage" style={{width:390*scale,height:844*scale}}><div className="phone" style={{transform:'scale('+scale+')'}}>
-    <div className="screens">
-      <section className="source-screen map-screen" aria-label="Карта" hidden={active!=='map'}><InteractiveMap/></section>
-      <section className="source-screen friends-screen" aria-label="Друзья" hidden={active!=='friends'}><FriendsScreen active={active==='friends'}/></section>
-      <section className="source-screen chats-screen" aria-label="Чаты" hidden={active!=='chats'}><ChatsScreen/></section>
-      <section className="source-screen market-screen" aria-label="Маркет" hidden={active!=='market'}><MarketScreen/></section>
-      <section className="source-screen profile-screen" aria-label="Профиль" hidden={active!=='profile'}><ProfileScreen/></section>
-    </div>
-    <TabBar active={active}/>
-  </div></main>;
+  return <>
+    <main className="stage" style={{width:390*scale,height:844*scale}}><div className="phone" style={{transform:'scale('+scale+')'}}>
+      <div className="screens" inert={styleOverlay}>
+        <section className="source-screen map-screen" aria-label="Карта" hidden={active!=='map'}><InteractiveMap style={selected} theme={theme}/></section>
+        <section className="source-screen friends-screen" aria-label="Друзья" hidden={active!=='friends'}><FriendsScreen active={active==='friends'}/></section>
+        <section className="source-screen chats-screen" aria-label="Чаты" hidden={active!=='chats'}><ChatsScreen/></section>
+        <section className="source-screen market-screen" aria-label="Маркет" hidden={active!=='market'}><MarketScreen {...{wallet,setWallet,selected,theme,setTheme,scenario,selectPermanent}}/></section>
+        <section className="source-screen profile-screen" aria-label="Профиль" hidden={active!=='profile'}><ProfileScreen mapStyle={styleNames[selected]}/></section>
+      </div>
+      {!styleOverlay && <TabBar active={active}/>}
+      {styleOverlay && (subpage==='settings'?<SettingsIndex onClose={()=>{location.hash='#/profile';}}/>:
+        <MapStyleSettings wallet={wallet} selected={selected} price={product('maps',0).price} theme={theme} setTheme={setTheme}
+          seasonal={seasonal} vip={scenario.vip} onChoose={selectStyle} onClose={()=>{location.hash=returnTo;}}
+          settingsOrigin={origin==='edit'?'edit':'settings'} applyStatus={scenario.applyStatus} feedback={seasonal && <SeasonalApplyMessage scenario={scenario}/>}/>)}
+    </div></main>
+    {seasonal && <SeasonalControls scenario={scenario}/>}
+  </>;
 }
 createRoot(document.getElementById('root')).render(<App/>);

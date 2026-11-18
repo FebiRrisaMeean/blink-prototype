@@ -13,3 +13,5 @@ dist/app.js
 dist/app.js.map
 dist/figma.css
 class-report.json
+
+dist/seasonal-map.html

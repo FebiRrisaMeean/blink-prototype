@@ -1,0 +1,179 @@
+.vip-reveal[data-motion-enabled="true"] {
+  transition: opacity .5s ease-out, transform .5s ease-out;
+}
+.vip-reveal[data-revealed="false"] { opacity: 0; transform: translateY(28px) }
+.vip-reveal[data-revealed="false"]:focus-within { opacity: 1; transform: none }
+.vip-motion-region[data-playing="false"] .vip-motion-loop { animation-play-state: paused }
+
+.vip-hero-live { position: absolute; inset: 0; overflow: hidden; pointer-events: none }
+.vip-hero-rays {
+  position: absolute; left: 0; top: 50px; width: 390px; height: 440px;
+  animation: vip-rays-entry .9s ease .42s both;
+}
+.vip-hero-rays img {
+  width: 100%; height: 100%; filter: blur(12px);
+  animation: vip-rays-spin 39.27s linear infinite, vip-rays-pulse 6.28s ease-in-out infinite;
+}
+.vip-hero-particles { position: absolute; inset: 0; width: 390px; height: 512px }
+.vip-hero-halo {
+  position: absolute; left: 53px; top: 128px; width: 284px; height: 284px;
+  background: radial-gradient(circle,#b9acff13,transparent 70%);
+  animation: vip-hero-halo 4.49s ease-in-out infinite;
+}
+.vip-hero-logo {
+  position: absolute; top: 90px; left: 89px; width: 197px; height: 123px;
+  animation: vip-wordmark-entry .34s cubic-bezier(.22,.61,.36,1) .06s both;
+}
+.vip-hero-star-entry {
+  position: absolute; top: 128px; left: 53px; width: 284px; height: 284px;
+  animation: vip-star-entry .42s cubic-bezier(.34,1.56,.64,1) .22s both;
+}
+.vip-hero-star {
+  display: block; width: 100%; height: 100%; object-fit: contain;
+  animation: vip-star-bob 5.71s ease-in-out infinite, vip-star-sway 10.47s ease-in-out infinite,
+    vip-star-tilt 7.85s ease-in-out infinite, vip-star-scale 4.49s ease-in-out infinite;
+}
+.vip-hero-glints { position: absolute; inset: 0; animation: vip-fade-in .28s ease-out .5s both }
+.vip-hero-glints img {
+  position: absolute; animation: vip-glint-float var(--period) ease-in-out var(--phase) infinite;
+}
+.vip-hero-glints img:nth-child(1) { left: 299px; top: 196px; width: 41px; --period: 8.98s; --phase: 0s; --dx: 5px; --dy: 7px }
+.vip-hero-glints img:nth-child(2) { left: 55px; top: 90px; width: 34px; --period: 11.42s; --phase: -3.82s; --dx: 6px; --dy: 5px }
+.vip-hero-glints img:nth-child(3) { left: 92px; top: 222px; width: 36px; --period: 10.47s; --phase: -2s; --dx: 4px; --dy: 6px }
+.vip-landing-hero[data-motion="animated"] .vip-hero-laurels { animation: vip-fade-in .28s ease-out .42s both }
+.vip-landing-hero[data-motion="animated"] h1 { animation: vip-subtitle-entry .38s ease-out .5s both }
+@keyframes vip-rays-entry { from { opacity: 0 } to { opacity: 1 } }
+@keyframes vip-rays-spin { to { transform: rotate(360deg) } }
+@keyframes vip-rays-pulse { 0%,50%,100% { opacity: .62 } 25% { opacity: 1 } }
+@keyframes vip-hero-halo { 0%,100% { opacity: .65 } 50% { opacity: 1 } }
+@keyframes vip-wordmark-entry {
+  from { opacity: 0; transform: translateY(-9px) scale(.92) }
+  to { opacity: 1; transform: none }
+}
+@keyframes vip-star-entry {
+  from { opacity: 0; transform: translateY(22px) scale(0) }
+  to { opacity: 1; transform: none }
+}
+@keyframes vip-star-bob { 25% { translate: 0 8px } 75% { translate: 0 -8px } }
+@keyframes vip-star-sway { 25% { transform: translateX(3.4px) } 75% { transform: translateX(-3.4px) } }
+@keyframes vip-star-tilt { 25% { rotate: 2.58deg } 75% { rotate: -2.58deg } }
+@keyframes vip-star-scale { 25% { scale: 1.016 } 75% { scale: .984 } }
+@keyframes vip-glint-float {
+  0%,100% { transform: translateY(var(--dy)) }
+  25% { transform: translateX(var(--dx)) }
+  50% { transform: translateY(calc(0px - var(--dy))) }
+  75% { transform: translateX(calc(0px - var(--dx))) }
+}
+@keyframes vip-subtitle-entry { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
+@keyframes vip-fade-in { from { opacity: 0 } to { opacity: 1 } }
+
+.vip-benefit.vip-benefit-guests {
+  background: linear-gradient(#101010,#080808), url('./vip-glow-bottom.png') center -161px / 390px 542px no-repeat;
+  background-blend-mode: screen;
+}
+.vip-guests-art, .vip-font-art, .vip-limited-art { position: absolute; inset: 0; pointer-events: none }
+.vip-guests-avatars { position: absolute; left: -11px; top: 0; width: 367px; z-index: 1 }
+.vip-guests-sweep { position: absolute; left: 120px; top: 16px; width: 103px }
+.vip-guests-sweep img { width: 100% }
+.vip-benefit-guests[data-motion-enabled="true"][data-revealed="true"] .vip-guests-avatars {
+  animation: vip-guests-up .75s cubic-bezier(.22,1,.36,1) both;
+}
+.vip-benefit-guests[data-motion-enabled="true"][data-revealed="true"] .vip-guests-sweep { animation: vip-eyes-sweep 4.4s ease-in-out .5s infinite }
+.vip-benefit-guests[data-motion-enabled="true"][data-revealed="true"] .vip-guests-bob { animation: vip-eyes-bob 2.1s ease-in-out .5s infinite }
+.vip-benefit-guests[data-motion-enabled="true"][data-revealed="true"] .vip-guests-bob img {
+  animation: vip-eyes-pop .55s cubic-bezier(.34,1.6,.5,1) .5s both;
+}
+@keyframes vip-guests-up { from { opacity: 0; transform: translateY(120px) } to { opacity: 1; transform: none } }
+@keyframes vip-eyes-pop { from { transform: scale(0) } to { transform: scale(1) } }
+@keyframes vip-eyes-sweep {
+  0%,100% { transform: translateX(-70px) rotate(-8deg) }
+  50% { transform: translateX(70px) rotate(8deg) }
+}
+@keyframes vip-eyes-bob { 0%,100% { transform: translateY(1px) } 50% { transform: translateY(-9px) } }
+
+.vip-nickname-art { position: absolute; inset: 0; pointer-events: none }
+.vip-benefit-nickname[data-motion-enabled="true"][data-revealed="false"] .vip-nickname-art { transform: translateY(190px) }
+.vip-benefit-nickname[data-motion-enabled="true"][data-revealed="true"] .vip-nickname-art {
+  animation: vip-phone-rise .9s cubic-bezier(.22,1,.36,1) .12s both;
+}
+.vip-nickname-phone { position: absolute; left: 31px; top: 84px; width: 282px }
+.vip-nickname-profile {
+  position: absolute; left: 115px; top: 98px; width: 114px; height: 114px;
+  object-fit: cover; object-position: top center;
+}
+.vip-nickname-dust { position: absolute; left: 72px; top: 55px; width: 200px; height: 200px }
+.vip-nickname-plate {
+  position: absolute; left: 92px; top: 196px; transform: rotate(-3deg);
+  display: flex; align-items: center; gap: 6px; height: 31px; padding: 0 11px 0 2px;
+  border-radius: 10px; overflow: hidden; background: #d9d4ea; border: 1px solid #e4e4e4;
+}
+.vip-nickname-plate .vip-nickname-foil {
+  position: absolute; left: 50%; top: 50%; width: 230px; height: 230px; max-width: none;
+  transform: translate(-50%,-50%);
+}
+.vip-nickname-icon {
+  position: relative; display: grid; place-items: center; width: 27px; height: 27px;
+  border-radius: 8px; background: linear-gradient(#666,#000);
+}
+.vip-nickname-icon img { width: 15px; height: 15px }
+.vip-nickname-handle {
+  position: relative; font: 500 13px Montserrat,sans-serif; white-space: nowrap; color: #000;
+  text-shadow: 0 .5px #fff;
+}
+.vip-nickname-name { position: absolute; left: 90px; top: 241px; display: flex; align-items: center }
+.vip-nickname-name-svg { display: block; overflow: visible }
+.vip-nickname-name-svg text {
+  font: 700 16px Montserrat,sans-serif; paint-order: stroke;
+  stroke-width: 5px; stroke-linejoin: round; stroke-linecap: round;
+}
+.vip-nickname-star-wrap { position: relative; display: inline-grid; place-items: center; margin-left: -5px }
+.vip-nickname-star-wrap::before {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 36px; height: 36px; filter: blur(4px);
+  transform: translate(-50%,-50%); opacity: .4;
+  background: radial-gradient(circle,#ffffffbf,#e2dcf466 42%,#fff0 70%);
+}
+.vip-nickname-star { position: relative; width: 26px; height: 26px; transform: rotate(8deg) }
+.vip-benefit-nickname[data-motion-enabled="true"] .vip-nickname-foil { animation: vip-foil-spin 11s linear infinite }
+.vip-benefit-nickname[data-motion-enabled="true"] .vip-name-shimmer { animation: vip-name-shimmer 1.2s linear infinite }
+.vip-benefit-nickname[data-motion-enabled="true"] .vip-nickname-star { animation: vip-name-star 2.1s ease-in-out infinite }
+.vip-benefit-nickname[data-motion-enabled="true"] .vip-nickname-star-wrap::before { animation: vip-name-star-glow 2.1s ease-in-out infinite }
+.vip-benefit-nickname[data-playing="false"] .vip-nickname-star-wrap::before { animation-play-state: paused }
+@keyframes vip-phone-rise { from { transform: translateY(190px) } to { transform: none } }
+@keyframes vip-foil-spin { to { transform: translate(-50%,-50%) rotate(360deg) } }
+@keyframes vip-name-shimmer { to { transform: translateX(185px) } }
+@keyframes vip-name-star { 50% { transform: rotate(8deg) scale(1.09) } }
+@keyframes vip-name-star-glow {
+  0%,100% { opacity: .4; transform: translate(-50%,-50%) scale(.88) }
+  50% { opacity: .9; transform: translate(-50%,-50%) scale(1.16) }
+}
+
+.vip-font-chasto { position: absolute; left: 110px; top: 47px; width: 125px }
+.vip-font-tryah { position: absolute; left: 7px; top: 77px; width: 327px; transform: rotate(-3deg) }
+.vip-font-shake { position: relative }
+.vip-font-shake img { width: 100%; filter: drop-shadow(0 -4px 9.3px #0008) }
+.vip-font-shine {
+  position: absolute; inset: 0; mix-blend-mode: screen;
+  background: linear-gradient(108deg,transparent 44%,#ffffff42 49%,#ffffff6b 50%,#ffffff42 51%,transparent 56%) 150% 0 / 260% 100%;
+  mask: url('./motion/font-tryah.png') center / 100% 100% no-repeat;
+}
+.vip-benefit-font[data-motion-enabled="true"] .vip-font-shake { animation: vip-font-shake 2s ease-in-out infinite }
+.vip-benefit-font[data-motion-enabled="true"] .vip-font-shine { animation: vip-font-shine 3.4s ease-in-out infinite }
+@keyframes vip-font-shake {
+  0%,70%,94%,100% { transform: none }
+  74% { transform: translateX(-3px) rotate(-1.4deg) }
+  78% { transform: translateX(3px) rotate(1.4deg) }
+  82% { transform: translateX(-2px) rotate(-1deg) }
+  86% { transform: translateX(2px) rotate(1deg) }
+  90% { transform: translateX(-1px) rotate(-.4deg) }
+}
+@keyframes vip-font-shine { 0% { background-position: 150% 0 } 60%,100% { background-position: -60% 0 } }
+.vip-limited-art { transform-origin: 50% 75% }
+.vip-benefit-limited[data-motion-enabled="true"] .vip-limited-art { animation: vip-limited-pulse 2.8s ease-in-out infinite }
+@keyframes vip-limited-pulse { 50% { transform: scale(1.03) } }
+
+.vip-action-motion { display: flow-root }
+.vip-action-motion[data-revealed="false"] .vip-landing-action { opacity: 0 }
+.vip-action-motion[data-motion-enabled="true"][data-revealed="true"] .vip-landing-action {
+  animation: vip-fade-in .4s ease-out .6s both;
+}
+.vip-landing-action:focus-visible { opacity: 1 !important; animation: none !important }

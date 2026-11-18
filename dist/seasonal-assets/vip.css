@@ -1,0 +1,137 @@
+@import url('./map.css');
+@import url('./vip-motion.css');
+
+.vip-landing-screen { overflow: hidden; background: #000 }
+.vip-landing-top { position: absolute; inset: 0 0 auto; height: 94px; z-index: 4; pointer-events: none }
+.vip-landing-close {
+  position: absolute; top: 62px; right: 16px; width: 32px; height: 32px;
+  display: grid; place-items: center; border-radius: 12px; pointer-events: auto; cursor: pointer;
+}
+.vip-landing-close img { width: 16px; height: 16px; filter: invert(1) }
+.vip-landing-scroll {
+  position: absolute; inset: 0; overflow: auto; scrollbar-width: none;
+  overscroll-behavior: contain;
+  background: url('./vip-glow-bottom.png') center 351px / 390px 542px no-repeat local,
+              #000 url('./vip-glow-bottom.png') center 631px / 390px 542px no-repeat local;
+  background-blend-mode: screen;
+}
+.vip-landing-scroll:focus { outline: none }
+.vip-landing-hero { position: relative; height: 512px }
+.vip-figma-art { position: absolute; pointer-events: none }
+.vip-hero-glow { top: 0; left: 0; width: 390px; height: 228px }
+.vip-hero-still { top: 87px; left: 0; width: 390px; height: 338px; mix-blend-mode: screen }
+.vip-hero-laurels { top: 396px; left: 46px; width: 298px; height: 83px; mix-blend-mode: screen }
+.vip-landing-hero h1 {
+  position: absolute; top: 420px; left: 100px; width: 190px;
+  text-align: center; color: #bcbcbc; font: 700 20px/20px Montserrat,sans-serif;
+}
+.vip-benefits { width: 344px; margin: 0 auto; display: grid; gap: 12px }
+.vip-benefit {
+  position: relative; height: 268px; overflow: hidden; border-radius: 30px;
+  color: white; border: 1px solid #ffffff2a; background: linear-gradient(#101010,#080808);
+}
+.vip-benefit-copy { position: absolute; inset: auto 18px 23px; text-align: center; z-index: 2 }
+.vip-benefit-copy h2 { font: 700 24px/29px Montserrat,sans-serif }
+.vip-benefit-copy p { margin-top: 6px; color: #f2f2f2; font: 400 15px/20px Roboto,sans-serif }
+.vip-benefit-nickname { height: 280px }
+.vip-benefit-nickname .vip-benefit-copy, .vip-benefit-limited .vip-benefit-copy { top: 23px; bottom: auto }
+.vip-benefit-limited .vip-benefit-copy { left: 36px; right: 36px }
+.vip-benefit-limited .vip-figma-art:nth-of-type(1) { width: 192px; height: 152px; left: 13px; top: 115px; mix-blend-mode: lighten }
+.vip-benefit-limited .vip-figma-art:nth-of-type(2) { width: 219px; height: 185px; left: 119px; top: 82px; mix-blend-mode: lighten }
+.vip-season-art {
+  position: absolute; inset: 0;
+  background: #242424 url('./vip-seasons-winter.webp') 50% 51% / cover no-repeat;
+}
+.vip-benefit-seasons::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg,transparent 30%,#05070842 49%,#050708bd 73%,#050708dc);
+}
+.vip-benefit-seasons .vip-benefit-copy { bottom: 19px; text-shadow: 0 1px 4px #000b }
+.vip-landing-plans { width: 342px; margin: 12px auto 0; padding-bottom: 50px }
+.vip-plans { margin: 0; padding: 0; display: grid; gap: 12px }
+.vip-plan {
+  position: relative; background: linear-gradient(#141414,#0b0b0b);
+  border-radius: 22px; border: 1px solid #2b2b2b;
+}
+.vip-plan label {
+  position: relative; display: flex; align-items: center; gap: 12px; min-height: 68px; padding: 0 17px 0 19px;
+  font: 600 15px/18px Montserrat,sans-serif; cursor: pointer;
+}
+.vip-plan input { position: absolute; left: 19px; width: 24px; height: 24px; margin: 0; opacity: 0; cursor: pointer }
+.vip-radio { flex: 0 0 24px; height: 24px; border: 2px solid #474747; border-radius: 50% }
+.vip-plan input:checked + .vip-radio { border: 7px solid #fff }
+.vip-plan input:focus-visible + .vip-radio { outline: 2px solid #b5ff40; outline-offset: 3px }
+.vip-plan.is-selected { background: #202020 }
+.vip-plan.is-selected label { background: #3d3d3d; outline: 2px solid #fff; outline-offset: -1px; border-radius: 21px }
+.vip-plan-monthly { margin-left: auto; color: #929292 }
+.vip-plan p { padding: 12px 5px 8px; text-align: center; color: #858585; font: 500 13px/13px "SF Pro Text",sans-serif }
+.vip-discount {
+  position: absolute; top: -9px; right: 13px; background: #b5ff40; color: #000;
+  padding: 4px 6px; border-radius: 5px; transform: rotate(9deg); font-weight: 700;
+}
+.vip-plan:first-child .vip-discount { background: #fa74e5 }
+.vip-landing-action { margin-top: 28px; justify-content: space-between }
+.vip-landing-action span { color: #777 }
+.vip-terms { margin-top: 16px; text-align: center; color: #888; font: 600 11px/13px Montserrat,sans-serif; text-decoration: underline; text-underline-offset: 2px }
+
+.vip-checkout-layer, .vip-success-layer { position: absolute; inset: 0; z-index: 75; outline: none }
+.vip-checkout-layer { background: #0009; display: flex; align-items: end }
+.vip-payment-sheet {
+  position: relative; width: 100%; min-height: 721px; max-height: 100%; overflow: auto; scrollbar-width: none;
+  border-radius: 38px; padding: 36px 32px 24px 33px; background: #f6faff; color: #273144;
+  font: 600 16px/24px Montserrat,sans-serif;
+}
+.vip-payment-close {
+  position: absolute; top: 11px; right: 13px; width: 36px; height: 36px; display: grid; place-items: center;
+  border-radius: 12px; cursor: pointer;
+}
+.vip-payment-close img { width: 14px; height: 14px }
+.vip-payment-summary { display: flex; height: 124px; align-items: flex-start; gap: 15px; padding-right: 10px; margin-bottom: 25px }
+.vip-payment-summary h2 { font: inherit }
+.vip-payment-summary strong { display: block; margin-top: 4px; font-size: 17px; font-weight: 600 }
+.vip-payment-logo { width: 62px; height: 63px; margin: 30px -2px 0; object-fit: contain; border-radius: 50% }
+.vip-payment-methods { display: grid; gap: 14px }
+.vip-payment-method {
+  display: flex; align-items: center; justify-content: center; gap: 13px;
+  width: 100%; height: 48.6px; border-radius: 8px; color: #fff; font: 700 14px/20px Montserrat,sans-serif; cursor: pointer;
+}
+.vip-payment-method img { object-fit: contain; width: var(--mark-width) }
+.vip-payment-bank { background: #2f71fd }
+.vip-payment-tpay { background: #fedd2d; --mark-width: 66px }
+.vip-payment-split { background: #000; --mark-width: 78px; cursor: default; font-size: 12px }
+.vip-payment-spay { background: #20a138; --mark-width: 68px }
+.vip-payment-sbp { background: #1e1346; --mark-width: 59px }
+.vip-payment-options { display: grid; gap: 11px; margin-top: 27px }
+.vip-payment-options p { display: flex; align-items: center; min-height: 21px; gap: 7px; font-size: 12px; line-height: 17px }
+.vip-payment-help { display: grid; place-items: center; width: 12px; height: 12px; border-radius: 50%; background: #bdc6cf; color: #f6faff; font: 700 10px/12px Roboto,sans-serif }
+.vip-payment-toggle {
+  width: 42px; height: 21px; margin-left: auto; border-radius: 22px;
+  background: radial-gradient(circle at 10px 10.5px,#fff 0 6px,transparent 7px),
+    radial-gradient(circle at 32px 10.5px,transparent 0 3px,#a6afb8 4px 5px,transparent 6px),#e3e9ee;
+}
+.vip-payment-footer { margin-top: 37px; display: grid; justify-items: center; gap: 15px }
+.vip-payment-logos { width: 100%; height: 50px; object-fit: contain }
+.vip-payment-secured { width: 154px; height: 19px; object-fit: contain }
+
+.vip-success-layer {
+  color: white; font-family: Montserrat,sans-serif; isolation: isolate;
+}
+.vip-success-window {
+  position: absolute; inset: auto 16px 32px; height: 412px; overflow: hidden; border-radius: 30px;
+  background: #000; text-align: center; padding: 0 20px 20px;
+}
+.vip-success-window .vip-figma-art:nth-of-type(1) { top: 0; left: 0; width: 358px; height: 269px }
+.vip-success-window .vip-figma-art:nth-of-type(2) { top: 26px; left: 105px; width: 134px; height: 84px }
+.vip-success-window .vip-figma-art:nth-of-type(3) { top: 65px; left: 94px; width: 169px; height: 169px; transform: rotate(15deg) }
+.vip-success-layer::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: .91; filter: brightness(1.086);
+  background: url('./vip-success-overlay.png') center / 390px 844px no-repeat;
+}
+.phone:has(.vip-success-layer) .vip-landing-top { visibility: hidden }
+.vip-success-layer .home-indicator { background: #b2edfc }
+.vip-landing-active { height: 56px; margin-top: 28px }
+.vip-success-window h2 { position: relative; margin-top: 250px; font: 600 20px/22px Montserrat,sans-serif }
+.vip-success-window p { margin-top: 8px; color: #808080; font: 400 15px/20px Roboto,sans-serif }
+.vip-success-window .style-primary { position: absolute; width: calc(100% - 40px); bottom: 20px }
+
+.vip-landing-top.is-scrolled { background: linear-gradient(#000e,#000c 65%,transparent) }

@@ -251,14 +251,16 @@ function Button({ className }: { className?: string }) {
   );
 }
 
-export default function Component() {
+export default function Component({artwork}: {artwork?: string}) {
   return (
     <div className="bg-white overflow-clip relative rounded-[36px] size-full" data-node-id="111805:64774" data-name="карта">
       <div className="-translate-y-1/2 absolute bg-white h-[844px] left-0 overflow-clip top-1/2 w-[390px]" data-node-id="111805:64775" data-name="MapView - BlinkMaps">
         <div className="absolute h-[844px] left-[-343px] top-0 w-[1425px]" data-node-id="I111805:64775;82209:26099" data-name="image 66">
           <div aria-hidden className="absolute inset-0 pointer-events-none">
-            <img alt="" className="absolute max-w-none object-cover size-full" src={imgImage66} />
-            <img alt="" className="absolute max-w-none object-cover size-full" src={imgImage67} />
+            {artwork ? <img alt="" className={'applied-map-artwork'} src={artwork}/> : <>
+              <img alt="" className="absolute max-w-none object-cover size-full" src={imgImage66} />
+              <img alt="" className="absolute max-w-none object-cover size-full" src={imgImage67} />
+            </>}
           </div>
         </div>
       </div>

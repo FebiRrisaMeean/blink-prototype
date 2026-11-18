@@ -1,0 +1,310 @@
+/* Shared map style surfaces */
+.map-style-screen {
+  position: absolute; inset: 0; z-index: 71; overflow: hidden;
+  color: #fff; background: #000; font-family: Montserrat, sans-serif;
+}
+.phone:has(.map-style-screen) > .tab-bar { visibility: hidden }
+.map-style-screen .status-bar { z-index: 3 }
+.style-screen-panel { position: absolute; inset: 0; background: #000 }
+.style-screen-sheet, .style-screen-settings, .style-screen-success {
+  background: linear-gradient(110deg,#d191e5 15%,#acd6f0 80%,#91daea);
+}
+.style-screen-sheet .style-screen-panel, .style-screen-settings .style-screen-panel {
+  inset: 86px 0 0; border-radius: 40px 40px 0 0; overflow: hidden;
+}
+.style-screen-settings .style-screen-panel { top: 56px }
+.style-screen-settings .status-bar { color: #000 }
+.style-screen-settings .system-icons { filter: brightness(0) }
+.style-sheet-handle {
+  position: absolute; top: 0; z-index: 2; inset-inline-start: 157px;
+  display: grid; place-items: start center; width: 76px; height: 26px;
+  padding-top: 8px; cursor: pointer;
+}
+.style-sheet-handle span { width: 33px; height: 4px; border-radius: 8px; background: #808080 }
+.style-square-close {
+  position: absolute; z-index: 2; bottom: 64px; left: 172px; width: 46px; height: 46px;
+  display: grid; place-items: center; border: 1px solid #eee; border-radius: 12px;
+  background: linear-gradient(#eee,#eee 25%,#b2b2b2); cursor: pointer;
+}
+.style-square-close img { width: 20px; height: 20px }
+.style-art { position: relative; overflow: hidden; isolation: isolate; background: #242424 }
+.style-art-picture { display: block; width: 100%; height: 100% }
+.style-art-image { width: 100%; height: 100%; object-fit: cover; object-position: 50% 51% }
+.style-art[data-theme="dark"][data-style="seasonal"] .style-art-image {
+  filter: brightness(.62) saturate(.85);
+}
+.style-art-pin {
+  position: absolute; left: 50%; top: 50%; width: 72px; height: 79px;
+  transform: translate(-50%,-50%);
+}
+.style-art-pin .style-pin-outline { width: 72px; height: 79px }
+.style-art-pin .style-pin-avatar {
+  position: absolute; left: 5px; top: 5px; width: 62px; height: 62px; border-radius: 23px; object-fit: cover;
+}
+.style-art-logo { position: absolute; left: 12px; bottom: 12px; width: 122px; height: 17px }
+.style-art-badge {
+  position: absolute; right: 10px; top: 10px; padding: 8px 11px; border-radius: 30px;
+  background: #fff; color: #000; font: 700 12px/1 Montserrat, sans-serif;
+}
+.style-limited { position: absolute; width: 143.6px; height: auto; left: -7.4px; top: 3px; transform: rotate(-4.97deg) }
+.style-primary {
+  display: flex; align-items: center; justify-content: center; width: 100%; min-height: 56px;
+  padding: 0 16px; border-radius: 20px; color: #000; background: #fff; cursor: pointer;
+  font: 700 15px/20px Montserrat,sans-serif; text-transform: uppercase;
+}
+.style-primary:disabled { cursor: default; opacity: .45 }
+.style-link { color: #b0daff; font: 600 15px/21px Montserrat,sans-serif; text-decoration: underline; text-underline-offset: 4px; cursor: pointer }
+.style-coin {
+  display: inline-flex; align-items: center; gap: 5px; color: #fff; padding: 3px 8px 3px 4px;
+  background: #171717; border-radius: 24px; border: 1px solid #ffffff22; font: 600 15px/20px Montserrat,sans-serif;
+}
+.style-coin img { width: 20px; height: 20px }
+.style-theme {
+  display: grid; grid-template-columns: repeat(3,1fr); height: 48px; gap: 2px;
+  padding: 2px; border: 2px solid #242424; border-radius: 13px;
+}
+.style-theme button {
+  min-width: 0; border-radius: 9px; cursor: pointer; color: #a4a4a4;
+  font: 700 12px/15px Montserrat,sans-serif; text-transform: uppercase;
+}
+.style-theme button[aria-pressed="true"] { color: #fff; background: #242424 }
+.style-theme button:disabled { color: #626262; cursor: default }
+.style-feedback { color: #c3c3c3; font: 500 14px/20px Montserrat,sans-serif }
+.style-feedback .style-link { margin-left: 5px }
+
+/* Market · cards and collection */
+.style-market { position: absolute; inset: 0; color: #fff; background: #000 }
+.style-market-glow { position: absolute; inset: 0; pointer-events: none }
+.style-market-glow {
+  background: radial-gradient(ellipse 215px 130px at 93% 3%,#ffc94f 0 29%,transparent 77%),
+    radial-gradient(ellipse 350px 124px at 31% 100%,#d94f9b 16%,transparent 97%),
+    radial-gradient(ellipse 290px 130px at 95% 100%,#b67b5c 28%,transparent 98%);
+}
+.style-market-scroll {
+  position: absolute; inset: 179px 0 108px;
+  overflow: auto; overscroll-behavior: contain; scrollbar-width: none;
+  text-align: center; padding: 0 16px 28px;
+}
+.style-market-offers { display: flex; flex-direction: column; align-items: center; gap: 4px }
+.style-market-offers:empty { display: none }
+.style-collection-copy { margin-top: 14px; margin-bottom: 52px }
+.style-collection-copy h2 { font: 600 24px/30px Montserrat,sans-serif }
+.style-collection-copy p { margin-top: 8px; color: #a0a0a0; font: 600 15px/20px Montserrat,sans-serif }
+.style-market-owned { display: flex; justify-content: center; flex-wrap: wrap }
+.style-market-card {
+  width: 179px; min-height: 140px; display: flex; flex-direction: column; align-items: center;
+  padding: 2px 0; gap: 10px; outline-offset: -1px; border-radius: 24px;
+}
+.style-market-card.is-large { width: 358px; height: 238px; justify-content: end; padding-bottom: 11px }
+.style-market-art {
+  width: 144px; height: 110px; position: relative; overflow: hidden;
+  transform: rotate(-3deg); border-radius: 14.4px;
+}
+.style-market-owned .style-market-art[data-card-style="gta"] { transform: rotate(2deg) }
+.is-large .style-market-art, .style-market-art.style-success-art { width: 180px; height: 139px; border-radius: 18px; transform: rotate(-5deg) }
+.style-market-art::before {
+  content: ""; position: absolute; inset: 0; z-index: 1; border: 4.8px solid #1c1c1c;
+  border-radius: inherit; pointer-events: none;
+}
+.is-large .style-market-art::before { border-width: 6px }
+.style-market-art.is-packaged::before { border: 6.19px solid black }
+.style-card-edge { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none }
+.style-market-art strong { z-index: 4 }
+.style-market-art .style-art-image { position: absolute; object-fit: fill }
+.style-market-art.is-packaged .style-art-image { width: 104.47%; height: 115.92%; left: -2.23%; top: -1.68%; filter: brightness(.9) }
+.style-market-owned [data-card-style="standard"] .style-art-image { width: 119.69%; height: 173.83%; left: -11.65%; top: -6.07% }
+.style-market-owned [data-card-style="gta"] .style-art-image { width: 127.21%; height: 360.32%; left: -5.42%; top: -127.68% }
+.style-market-art[data-card-style="seasonal"] .style-art-image { object-fit: cover }
+.style-market-art .style-art { height: 100% }
+.style-market-art strong {
+  position: absolute; bottom: 11px; left: 0; right: 0; text-align: center;
+  color: #fff; font: 700 15px/18px Montserrat,sans-serif;
+  -webkit-text-stroke: 3px #000; paint-order: stroke fill;
+}
+.style-card-new { width: 113px; height: auto; position: absolute; left: -15px; top: 0; z-index: 4 }
+.style-card-film { position: absolute; width: 261.2px; height: 267.4px; left: -33.4px; top: -29.6px; object-fit: cover; z-index: 3; pointer-events: none }
+.style-chosen { color: #b5ff40; font: 600 15px/24px Montserrat,sans-serif }
+.style-chosen b { display: inline-grid; place-items: center; width: 24px; border-radius: 50%; background: #b5ff40; color: #000; margin-right: 3px }
+
+/* Full-height sheets scroll independently of their actions */
+.style-detail-scroll {
+  position: absolute; inset: 25px 0 125px; padding: 4px 24px 20px;
+  display: flex; flex-direction: column; gap: 12px;
+  overflow: auto; scrollbar-width: none; overscroll-behavior: contain;
+}
+.style-detail-scroll h1, .style-picker-scroll h1, .style-index-scroll h1 {
+  font: 700 28px/34px Montserrat,sans-serif; letter-spacing: -.35px;
+}
+.style-detail-description { color: #a0a0a0; font: 600 15px/19px Montserrat,sans-serif; overflow-wrap: anywhere }
+.style-detail-image { flex: none; width: 100%; height: 292px; border-radius: 24px; margin-top: 7px }
+.style-friends { display: flex; align-items: center; gap: 14px; margin-top: 7px; color: #aaa; font: 600 13px/17px Montserrat,sans-serif }
+.style-friends div { display: flex; padding-right: 6px }
+.style-friends img { width: 32px; height: 32px; border-radius: 14px; object-fit: cover; margin-right: -6px; border: 1px solid #000 }
+.style-detail-footer {
+  position: absolute; inset: auto 24px 56px; display: grid; gap: 10px; justify-items: center;
+  background: #000;
+}
+.style-buy { justify-content: space-between }
+.style-buy .style-coin { color: #000; background: none; padding: 0; border: none; font-weight: 700 }
+.style-buy .style-coin img { width: 28px; height: 28px }
+.style-already { display: grid; place-items: center; min-height: 32px; color: #aaa; font: 700 14px/18px Montserrat,sans-serif; text-transform: uppercase }
+.style-screen-success .style-screen-panel { background: transparent }
+.style-success-card {
+  position: absolute; inset: auto 16px 32px; background: #000; border-radius: 32px;
+  height: 418px; display: grid; justify-items: center; gap: 0; padding: 0;
+  text-align: center;
+}
+.style-success-card h2 { position: absolute; inset: 256px 20px auto; font: 600 20px/22px Montserrat,sans-serif }
+.style-success-card p { position: absolute; inset: 286px 20px auto; color: #808080; font: 400 15px/20px Roboto,sans-serif }
+.style-success-card .style-primary { position: absolute; inset: auto 20px 20px; width: 318px }
+.style-confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 2 }
+.style-confetti img { position: absolute; top: 0; left: 0; transform-origin: 0 0; object-fit: cover }
+.style-confetti img:first-child { width: 241.59px; height: 600px; transform: matrix(.612787,-.790248,-.790248,-.612787,654.148,833.59) }
+.style-confetti img:last-child { width: 258.18px; height: 641.19px; transform: matrix(-.612787,-.790248,.790248,-.612787,-233.793,806.939) }
+
+.style-picker-scroll {
+  position: absolute; inset: 79px 0 120px; padding: 8px 16px 16px;
+  overflow: auto; scrollbar-width: none; overscroll-behavior: contain;
+}
+.style-picker-image { width: 358px; height: 358px; border-radius: 24px; margin-top: 27px }
+.style-picker-image::after { content: ""; position: absolute; inset: 0; border: 6px solid #fff; border-radius: inherit; pointer-events: none }
+.style-picker-options { display: flex; align-items: start; justify-content: center; gap: 12px; margin: 16px 0 23px }
+.style-picker-options button {
+  width: 74px; position: relative; cursor: pointer; color: #a0a0a0;
+  display: grid; gap: 6px; justify-items: center; white-space: nowrap;
+  font: 600 12px/15px Montserrat,sans-serif;
+}
+.style-picker-options button .style-art { width: 68px; height: 52px; margin-top: 4px; border-radius: 16px; border: 2px solid #444 }
+.style-picker-options button[aria-pressed="true"] { color: #fff }
+.style-picker-options button[aria-pressed="true"] .style-art { border-color: #fff; box-shadow: 0 0 0 4px #fff5 }
+.style-picker-options button .style-coin { position: absolute; top: -2px; right: -5px; font-size: 10px; line-height: 14px; height: 22px; gap: 3px }
+.style-picker-options button .style-coin img { width: 15px; height: 15px }
+.style-lock {
+  position: absolute; top: -2px; right: -5px; width: 24px; height: 24px;
+  border-radius: 50%; color: #000; background: #fff; display: grid; place-items: center;
+}
+.style-live { position: absolute; left: 0; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden }
+.style-picker-scroll .style-feedback { text-align: center }
+.style-lock-overlay {
+  position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: 36px;
+  background: linear-gradient(130deg,#cb90eadd,#99dce5ee);
+}
+.style-lock-card { border-radius: 28px; background: #000; display: grid; justify-items: center; text-align: center; padding: 22px 20px 18px; gap: 10px }
+.style-lock-card .style-art { width: 80px; height: 61px; border-radius: 18px; margin-bottom: 8px }
+.style-lock-card h2 { font-size: 19px }
+.style-lock-card p { font: 500 14px/20px Montserrat,sans-serif; color: #a0a0a0 }
+.style-lock-card .style-primary { margin-top: 6px }
+.style-index-scroll { position: absolute; inset: 25px 0 30px; padding: 14px 16px; overflow: auto; scrollbar-width: none }
+.style-index-scroll ul { list-style: none; margin: 18px 0 24px; padding: 0 }
+.style-index-scroll li > * { min-height: 56px; display: flex; align-items: center; gap: 16px; font: 600 15px/20px Montserrat,sans-serif }
+.style-index-scroll li img { width: 24px; height: 24px; object-fit: contain }
+
+.interactive-map img.applied-map-artwork {
+  position: absolute; width: 100%; height: 100% !important; top: 0 !important;
+  object-fit: cover; object-position: center;
+}
+.interactive-map[data-style="standard"][data-theme="dark"] [data-name="MapView - BlinkMaps"] { filter: brightness(.67) saturate(.8) }
+.interactive-map[data-style="seasonal"][data-theme="dark"] .applied-map-artwork { filter: brightness(.62) saturate(.85) }
+@media (prefers-color-scheme: dark) {
+  .style-art[data-theme="system"][data-style="seasonal"] .style-art-image { filter: brightness(.62) saturate(.85) }
+  .interactive-map[data-style="standard"][data-theme="system"] [data-name="MapView - BlinkMaps"],
+  .interactive-map[data-style="seasonal"][data-theme="system"] .applied-map-artwork { filter: brightness(.67) saturate(.8) }
+}
+
+/* Seasonal variant */
+.seasonal-preview { position: relative }
+.seasonal-preview-status {
+  position: absolute; inset: 7px 0 0; border-radius: 24px;
+  background: #121820b8; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; color: white; font: 600 15px/20px Montserrat,sans-serif;
+}
+.seasonal-spinner { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff5; border-top-color: #fff; animation: seasonal-spin .8s linear infinite }
+@keyframes seasonal-spin { to { transform: rotate(360deg) } }
+@media (prefers-reduced-motion: reduce) { .seasonal-spinner { animation: none } }
+.style-retry { background: #fff; color: #000; padding: 8px 18px; border-radius: 24px; cursor: pointer; font-weight: 700 }
+.seasonal-controls {
+  position: fixed; z-index: 3; top: 16px; right: 16px; width: 210px; padding: 12px;
+  background: #252525; border: 1px solid #ffffff28; border-radius: 14px;
+  color: #eee; font: 500 12px/18px Montserrat,sans-serif;
+}
+.seasonal-controls summary { cursor: pointer }
+.seasonal-control-buttons { display: grid; gap: 4px; margin: 8px 0 }
+.seasonal-control-buttons button { padding: 5px 8px; text-align: left; cursor: pointer; border-radius: 6px }
+.seasonal-control-buttons button[aria-pressed="true"] { color: #111; background: #b5ff40 }
+.seasonal-controls label { display: flex; align-items: center; gap: 6px; margin-top: 5px }
+.seasonal-controls input { outline-offset: 0 }
+@media (max-width: 840px) {
+  .seasonal-controls { top: auto; bottom: 6px; right: 6px; border-radius: 10px; padding: 6px 8px }
+  .seasonal-controls:not([open]) { width: auto; background: #252525ec }
+}
+.map-style-screen:focus { outline: none }
+.style-market .style-collection-copy { margin-top: 26px }
+.style-market-offers:empty + .style-collection-copy { margin-top: 38px }
+.style-index-scroll h2 {
+  color: #888; font: 700 12px/16px Montserrat,sans-serif; text-transform: uppercase;
+  margin: 21px 0 12px;
+}
+.style-index-scroll .settings-icon-fallback {
+  display: grid; place-items: center; flex: 0 0 24px; height: 24px; border: 2px solid white;
+  border-radius: 50%; font: 700 14px/1 Montserrat,sans-serif;
+}
+.style-index-scroll .settings-location-label {
+  background: linear-gradient(90deg,#48dbf3,#a655ff); background-clip: text; color: transparent;
+}
+.style-app-icons { background: #242424; border-radius: 22px; display: flex; gap: 23px; padding: 24px }
+.style-app-icons img { width: 60px; height: 60px; border-radius: 14px }
+.style-success-art { position: absolute; top: 71px; left: 89px }
+.interactive-map[data-style="gta"] [data-node-id="I111805:64775;82209:26099"] { left: -40px; top: -35px; width: 470px; height: 914px }
+.interactive-map[data-style="seasonal"] [data-node-id="I111805:64775;82209:26099"] { left: -204px; top: -35px; width: 798px; height: 914px }
+@media (max-width: 840px) {
+  body[data-variant="seasonal"] #root { padding-bottom: 42px }
+}
+
+/* Original artwork, geometry and wrapping from the current product frames */
+.style-screen-sheet, .style-screen-settings { background: #000 url('./assets/map-detail-glow.png') center / 390px 844px no-repeat }
+.style-screen-success { background: #000 url('./assets/map-receipt-glow.png') center / 390px 844px no-repeat }
+.style-market-glow {
+  background: url('./assets/market-glow-top.png') center top / 390px 156px no-repeat,
+              url('./assets/market-glow-bottom.png') center bottom / 390px 208px no-repeat;
+}
+.style-art-pin-source {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-47.5%); width: 72px; height: 80px;
+}
+.style-art-badge { display: flex; align-items: center; gap: 4px; box-shadow: inset -1px -2px 4px #12006a40 }
+.style-art-badge img { width: 12px; height: 12px }
+.style-detail-image .style-art-logo { bottom: 16px; left: 16px }
+.style-detail-image[data-style="gta"] .style-art-image {
+  position: absolute; width: 583.5px; height: 1267.3px; left: -119.4px; top: -431.7px;
+}
+.style-detail-scroll { gap: 8px; padding-top: 3px }
+.style-detail-description { color: #808080; line-height: 18px }
+.style-detail-image { margin-top: 12px }
+.style-detail-scroll > .style-theme { margin: 2px -8px 0 }
+.style-friends { gap: 12px; margin-top: 8px; min-height: 40px; color: #808080; font-size: 13px }
+.style-friends div { padding: 0 }
+.style-friends img, .style-friends b {
+  width: 36px; height: 36px; border: 2px solid #000; border-radius: 14px; margin-right: -12px;
+}
+.style-friends b { margin-right: 0; display: grid; place-items: center; background: #444; color: #fff; font: 700 11px Montserrat,sans-serif }
+
+.style-lock-overlay { background: none; place-items: start center; padding: 241px 36px 0; isolation: isolate }
+.style-lock-overlay::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: .9; filter: brightness(1.11);
+  background: url('./assets/map-locked-glow.png') center / 390px 844px no-repeat;
+}
+.style-screen-picker:has(.style-lock-overlay) .home-indicator { background: #b2edfc }
+.style-lock-card { position: relative; display: block; width: 318px; height: 310px; padding: 0; border-radius: 30px }
+.style-lock-art { position: absolute; width: 85px; height: 67px; top: 38px; left: 116.5px }
+.style-lock-card h2 { position: absolute; inset: 140px 20px auto; font: 600 20px/22px Montserrat,sans-serif }
+.style-lock-card p { position: absolute; inset: 174px 20px auto; font: 400 15px/20px Roboto,sans-serif; color: #808080 }
+.style-lock-card .style-primary { position: absolute; inset: 234px 20px auto; width: 278px; margin: 0 }
+.style-index-scroll { bottom: 0 }
+.style-app-icons > span { position: relative }
+.style-settings-active-icon {
+  width: 24px; height: 24px; border: 3px solid #242424; border-radius: 50%; background: white;
+  position: absolute; right: -2px; bottom: -2px; display: grid; place-items: center;
+}
+.style-settings-active-icon::after { content: ""; width: 8px; height: 5px; border: solid #171717; border-width: 0 0 2px 2px; transform: translateY(-1px) rotate(-45deg) }
+.style-app-icons + h2 { margin-top: 25px; margin-bottom: 18px }
+.style-settings-social { display: flex; align-items: center; gap: 20px; padding-bottom: 8px }
+.style-settings-social img { width: 24px; height: 24px; object-fit: contain; opacity: .5 }

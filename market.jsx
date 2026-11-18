@@ -2,20 +2,21 @@ import React,{useState,useEffect,useRef,useLayoutEffect} from 'react';
 import {createPortal} from 'react-dom';
 import Stickers from './.generated/market.tsx';
 import Tails,{Tail,Package} from './.generated/market-tails.tsx';
-import Maps,{MapStyle} from './.generated/market-maps.tsx';
 import Gifts from './.generated/market-gifts.tsx';
 import StickerItem from './.generated/item-stickers.tsx';
 import TailItem from './.generated/item-tail.tsx';
 import OwnedItem from './.generated/item-owned.tsx';
 import ArchiveItem from './.generated/item-archive.tsx';
-import MapItem from './.generated/item-map.tsx';
 import GiftCompose from './.generated/gift-compose.tsx';
 import RecipientSource from './.generated/gift-recipients.tsx';
 import {ModalSheet as CoinPackSheet} from './.generated/coin-packs.tsx';
-import {productNames as names,giftImages,stickerSlides,product,productById,readWallet,saveWallet,cleanWallet,purchase,topUp,coinPacks} from './market-model.mjs';
+import {productNames as names,giftImages,stickerSlides,product,productById,purchase,topUp,coinPacks} from './market-model.mjs';
+import {GtaSuccess, MapsCatalog, MapStyleDetail, ownsGta, setPermanentStyle} from './map-styles.jsx';
+import {SeasonalDetail, seasonalOffer} from './variants/seasonal-map/seasonal.jsx';
+import VipFlow from './variants/seasonal-map/vip.jsx';
 
-const categories=[['stickers','стикеры',Stickers],['tails','хвосты',Tails],['maps','карты',Maps],['gifts','подарки',Gifts]];
-const catalogScroll={stickers:'122634:86147',tails:'123450:103465',maps:'122710:229519',gifts:'95408:39934'};
+const categories=[['stickers','стикеры',Stickers],['tails','хвосты',Tails],['maps','карты',null],['gifts','подарки',Gifts]];
+const catalogScroll={stickers:'122634:86147',tails:'123450:103465',gifts:'95408:39934'};
 const q=(root,id)=>root?.querySelector('[data-node-id="'+id+'"]');
 function MarketHeader({balance,onCoins,blocked}){return <div className="market-fixed-header" inert={blocked} aria-hidden={blocked||undefined}><div className="status-bar"><span className="time">4:20</span><span className="brand"><img src="./assets/f548a.svg" alt="Blink"/></span><img className="system-icons" src="./assets/2f068.svg" alt=""/></div><header className="market-header"><h1>маркет</h1><button className="market-balance" onClick={onCoins} aria-label="Пополнить баланс"><img src="./assets/d8eee.svg" alt=""/><span>{balance.toLocaleString('ru-RU')}</span><span className="market-plus"><img src="./assets/3312e.svg" alt=""/></span></button></header></div>;}
 const go=path=>{location.hash='#/market/'+path;};
@@ -37,7 +38,6 @@ function useDialog(ref,onClose,autofocus){
 function Sheet({label,onClose,children,className=''}){const ref=useRef(null);useDialog(ref,onClose);return <div ref={ref} tabIndex={-1} className={'market-sheet '+className} role="dialog" aria-modal="true" aria-label={label}><button className="sheet-close" onClick={onClose} aria-label="Закрыть">×</button>{children}</div>;}
 function makeAction(el,label,action){if(!el)return;el.setAttribute('role','button');el.tabIndex=0;el.setAttribute('aria-label',label);el.dataset.action=action;el.classList.add('market-action');}
 function CollectionArtwork({p}){
- if(p.category==='maps')return <MapStyle showNewBadge={false} showPrice={false}/>;
  return <div className="collection-art"><Package type="Collection"/>{p.category==='tails'?<div className="collection-tail"><Tail type={p.name==='дементор'?'dementor':p.name==='кото йота'?'yota':'rocket'}/></div>:<img className="collection-sticker" src={'./assets/'+['952aa.png','510d6.png','00566.png','c5116.png'][stickerSlides[p.index]]} alt=""/>}</div>;
 }
 function Catalog({category,Component,active,onTopUp,balance,owned,blocked}){
@@ -45,36 +45,32 @@ function Catalog({category,Component,active,onTopUp,balance,owned,blocked}){
  useLayoutEffect(()=>{const scroll=q(ref.current,catalogScroll[category]);if(!scroll)return;const host=document.createElement('div');host.className='market-collection-host';const heading=[...scroll.children].find(n=>n.textContent.includes('уже у тебя'));scroll.insertBefore(host,heading?.nextSibling||null);setCollectionHost(host);return()=>host.remove();},[category]);
  useEffect(()=>{
   const root=ref.current;const scroll=q(root,catalogScroll[category]);scroll?.classList.add('market-catalog-scroll');scroll?.setAttribute('aria-label','Каталог: '+categories.find(c=>c[0]===category)[1]);if(scroll)scroll.tabIndex=0;
-  const cards=(category==='maps'?[q(root,'122886:55334'),...root.querySelectorAll('[id="node-122941_63470"],[id="node-122947_56480"]')]:[...root.querySelectorAll('[data-name="item box"],[data-name="item"]')].slice(0,names[category].length)).filter(el=>el&&!el.closest('[data-acquired-product]'));
+  const cards=[...root.querySelectorAll('[data-name="item box"],[data-name="item"]')].slice(0,names[category].length).filter(el=>!el.closest('[data-acquired-product]'));
   cards.filter(Boolean).forEach((el,index)=>{const p=product(category,index),has=p.owned||owned.includes(p.id);el.dataset.product=p.id;if(p.owned&&el.parentElement!==scroll)el.parentElement.classList.add('market-owned-row');makeAction(el,p.name+(p.soon?', скоро':p.archived?', архив':has?', в коллекции':', '+(p.free?'бесплатно':p.price+' блинкоинов')),'item/'+p.id);[...el.querySelectorAll('p')].filter(n=>/^\d+$|^бесплатно$/.test(n.textContent.trim())).forEach(n=>{n.parentElement.style.visibility=has?'hidden':'';});});
   const plus=root.querySelector('[data-name="Coin balance"] [data-name="Button"]');makeAction(plus,'Пополнить баланс','coins');
  },[category,owned]);
  useEffect(()=>{const n=ref.current?.querySelector('[data-name="Coin balance"] [data-name="value"] p');if(n)n.textContent=balance.toLocaleString('ru-RU');},[balance]);
  const handle=e=>{const a=e.target.closest('[data-action]');if(!a)return;if(e.type==='keydown'&&!['Enter',' '].includes(e.key))return;e.preventDefault();if(a.dataset.action==='coins')onTopUp(category);else go(category+'/'+a.dataset.action);};
  const acquired=owned.map(productById).filter(p=>p?.category===category&&!p.owned);
- return <div ref={ref} className={'market-catalog category-'+category} hidden={!active} inert={blocked} aria-hidden={blocked||undefined} onClick={handle} onKeyDown={handle}><Component/>{collectionHost&&acquired.length>0&&createPortal(<section className="market-acquired" aria-label="Новые предметы в коллекции">{category==='maps'&&<h2>уже у тебя</h2>}<div className="market-acquired-grid">{acquired.map(p=><button key={p.id} className="market-acquired-card" data-acquired-product={p.id} data-action={'item/'+p.id} aria-label={p.name+', в коллекции'}><CollectionArtwork p={p}/></button>)}</div></section>,collectionHost)}</div>;
+ return <div ref={ref} className={'market-catalog category-'+category} hidden={!active} inert={blocked} aria-hidden={blocked||undefined} onClick={handle} onKeyDown={handle}><Component/>{collectionHost&&acquired.length>0&&createPortal(<section className="market-acquired" aria-label="Новые предметы в коллекции"><div className="market-acquired-grid">{acquired.map(p=><button key={p.id} className="market-acquired-card" data-acquired-product={p.id} data-action={'item/'+p.id} aria-label={p.name+', в коллекции'}><CollectionArtwork p={p}/></button>)}</div></section>,collectionHost)}</div>;
 }
 function Item({p,onClose,onBuy,onSelect,owned,selected,blocked}){
  const ref=useRef(null);
  const unavailable=p.archived||p.soon;
- const Component=p.category==='stickers'?StickerItem:p.archived?ArchiveItem:p.category==='maps'?MapItem:(owned?OwnedItem:TailItem);
+ const Component=p.category==='stickers'?StickerItem:p.archived?ArchiveItem:(owned?OwnedItem:TailItem);
  useLayoutEffect(()=>{
   const root=ref.current;const modal=root.querySelector('[data-name="Modal sheet"]');modal?.classList.add('market-item-sheet');
   const header=modal?.querySelector('[data-name="HeaderView"] p');if(header)header.textContent=p.name;
   const paragraphs=[...root.querySelectorAll('p')];paragraphs.filter(n=>/^название предмета$/.test(n.textContent.trim())).forEach(n=>n.textContent=p.name);
   makeAction(modal?.querySelector('[data-name="Indicator"]'),'Закрыть товар и вернуться в каталог','close');
   const cta=[...root.querySelectorAll('[data-name="Button"]')].find(el=>/купить|выбрать|применить|Уже не получить/i.test(el.textContent));
-  if(cta){cta.classList.add('market-source-cta');if(unavailable){cta.setAttribute('aria-disabled','true');cta.textContent=p.soon?'скоро':'уже не получить :/';cta.classList.add('market-unavailable');}else {makeAction(cta,owned?(selected?'Уже выбрано':'Выбрать '+p.name):'Купить '+p.name,'purchase');const t=cta.querySelector('p');if(t)t.textContent=owned?(selected?'выбрано':p.category==='maps'?'применить':'выбрать'):(p.free?'получить':'купить');const nums=[...cta.querySelectorAll('p')].filter(n=>/^\d+$/.test(n.textContent.trim()));nums.forEach((n,i)=>{n.textContent=i===0?String(p.free?0:p.price):'';});if(owned)nums.forEach(n=>n.parentElement.style.display='none');}}
+  if(cta){cta.classList.add('market-source-cta');if(unavailable){cta.setAttribute('aria-disabled','true');cta.textContent=p.soon?'скоро':'уже не получить :/';cta.classList.add('market-unavailable');}else {makeAction(cta,owned?(selected?'Уже выбрано':'Выбрать '+p.name):'Купить '+p.name,'purchase');const t=cta.querySelector('p');if(t)t.textContent=owned?(selected?'выбрано':'выбрать'):(p.free?'получить':'купить');const nums=[...cta.querySelectorAll('p')].filter(n=>/^\d+$/.test(n.textContent.trim()));nums.forEach((n,i)=>{n.textContent=i===0?String(p.free?0:p.price):'';});if(owned)nums.forEach(n=>n.parentElement.style.display='none');}}
   const tail=root.querySelector('[data-name="tail image"] img');if(tail&&p.category==='tails'){tail.src='./assets/'+(p.name==='дементор'?'0f67e.png':p.name==='кото йота'?'987e5.png':'tail-rocket-fill-1.png');if(p.name==='огненный хвост'){tail.parentElement.parentElement.style.inset='-36.34% -50.12% -36.34% -49.12%';tail.parentElement.style.transform='rotate(-50deg)';tail.style.filter='url(#market-tail-alpha)';}}
   root.querySelectorAll('[data-name="Close window bottom"]').forEach(el=>el.style.display='none');
   if(cta&&p.free&&!owned&&!unavailable)cta.setAttribute('aria-label','Получить '+p.name);
   if(p.soon){const timer=q(root,'84232:25536');if(timer)timer.style.display='none';}
-  paragraphs.filter(n=>/Регина|Здесь прикольный|здесь прикольный/.test(n.textContent)||(p.category==='tails'&&n.textContent.trim().toLowerCase().startsWith('этот пак'))).forEach(n=>{n.textContent=p.category==='tails'?'Хвост для твоего пина на карте':p.category==='maps'?'Стиль твоей карты':'Стикеры для переписок с друзьями';});
+  paragraphs.filter(n=>/Регина|Здесь прикольный|здесь прикольный/.test(n.textContent)||(p.category==='tails'&&n.textContent.trim().toLowerCase().startsWith('этот пак'))).forEach(n=>{n.textContent=p.category==='tails'?'Хвост для твоего пина на карте':'Стикеры для переписок с друзьями';});
   [...root.firstElementChild.children].filter(n=>!n.contains(modal)&&n.getAttribute('data-name')!=='StatusBar').forEach(n=>n.setAttribute('aria-hidden','true'));
-  if(cta&&p.category==='maps'){
-   cta.querySelector('.market-map-price')?.remove();cta.classList.toggle('market-map-purchase',!owned);
-   if(!owned){const price=document.createElement('span');price.className='market-map-price';const coin=document.createElement('img');coin.src='./assets/d8eee.svg';coin.alt='';price.append(coin,document.createTextNode(String(p.price)));cta.append(price);}
-  }
   if(p.archived){const remaining=q(root,'84208:22320')?.querySelector('p');if(remaining)remaining.textContent='0';if(p.category==='stickers'){['84208:22312','84208:22313'].forEach(id=>{const n=q(root,id);if(n)n.style.display='none';});}}
  },[p.id,owned,selected]);
  useDialog(ref,onClose);
@@ -106,24 +102,62 @@ function Gift({p,onClose,onPurchase,friend,setFriend,comment,setComment,anonymou
  </div>{choose&&<FriendPicker onClose={()=>setChoose(false)} onSelect={name=>{setFriend(name);setChoose(false);}}/>}
  </div>;
 }
-export default function Market(){
- const route=useRoute(),lastCategory=useRef('stickers');if(route[0]==='market'&&categories.some(c=>c[0]===route[1]))lastCategory.current=route[1];const category=lastCategory.current;const isMarket=route[0]==='market';const itemId=isMarket&&route[2]==='item'?route[3]:null;const candidate=productById(itemId),p=candidate?.category===category?candidate:null;
- const [wallet,setWallet]=useState(()=>readWallet(localStorage)),[sheet,setSheet]=useState(null),[notice,setNotice]=useState('');const {balance,owned,selected}=wallet;
+export default function Market({wallet,setWallet,selected:mapStyle,theme,setTheme,scenario,selectPermanent}){
+ const route=useRoute(),lastCategory=useRef('stickers');
+ const isMarket=route[0]==='market';
+ if(isMarket&&categories.some(c=>c[0]===route[1]))lastCategory.current=route[1];
+ const category=lastCategory.current;
+ const page=isMarket&&category==='maps'?route[2]:'';
+ const settingsOrigin=page==='item'?route[4]:route[3];
+ const fromSettings=['settings','edit'].includes(settingsOrigin);
+ const itemId=isMarket&&route[2]==='item'?route[3]:null;
+ const candidate=productById(itemId),p=candidate?.category===category?candidate:null;
+ const gta=p?.category==='maps', standard=page==='standard';
+ const seasonalPage=scenario.enabled && ['seasonal','vip','vip-checkout','vip-success'].includes(page);
+ const hasDetail=!!itemId||standard||seasonalPage;
+ const [sheet,setSheet]=useState(null),[notice,setNotice]=useState(''),[mapSuccess,setMapSuccess]=useState(false);
+ const {balance,owned,selected}=wallet;
  const [friend,setFriend]=useState(''),[comment,setComment]=useState(''),[anonymous,setAnonymous]=useState(false);
- const close=()=>go(category);
- useEffect(()=>{setSheet(null);},[route.join('/')]);
- useEffect(()=>{saveWallet(localStorage,wallet);},[wallet]);
+ const close=()=>{
+  setMapSuccess(false);
+  if(fromSettings)location.hash='#/profile/map-style'+(settingsOrigin==='edit'?'/edit':'');
+  else go(category);
+ };
+ const returnToSeasonal=()=>go('maps/seasonal'+(fromSettings?'/'+settingsOrigin:''));
+ useEffect(()=>{setSheet(null);setMapSuccess(false);},[route.join('/')]);
  useEffect(()=>{if(!notice)return;const t=setTimeout(()=>setNotice(''),2800);return()=>clearTimeout(t);},[notice]);
  const buy=item=>setSheet({type:'buy',p:item});
- const select=item=>{setWallet(w=>({...w,selected:{...w.selected,[item.category]:item.id}}));setNotice(item.category==='maps'?'стиль карты выбран':'предмет выбран');};
- const confirm=()=>{if(sheet?.type!=='buy')return;const item=sheet.p,result=purchase(wallet,item);if(result.error==='balance'){setSheet({type:'insufficient',insufficient:true,required:item.price});return;}if(result.error){setSheet(null);return;}setWallet(result.wallet);setSheet(null);setNotice(item.category==='gifts'?'подарок подготовлен для '+friend:'предмет теперь у тебя');if(item.category==='gifts'){close();setComment('');setFriend('');}};
+ const select=item=>{setWallet(w=>({...w,selected:{...w.selected,[item.category]:item.id}}));setNotice('предмет выбран');};
+ const confirm=()=>{
+  if(sheet?.type!=='buy')return;
+  const item=sheet.p,result=purchase(wallet,item);
+  if(result.error==='balance'){setSheet({type:'insufficient',required:item.price});return;}
+  if(result.error){setSheet(null);return;}
+  if(item.category==='maps') {
+    scenario.deselect();
+    setWallet(setPermanentStyle(result.wallet,'gta'));
+    setMapSuccess(true);
+  } else {
+    setWallet(result.wallet);
+    setNotice(item.category==='gifts'?'подарок подготовлен для '+friend:'предмет теперь у тебя');
+  }
+  setSheet(null);
+  if(item.category==='gifts'){close();setComment('');setFriend('');}
+ };
  const confirmTopUp=()=>{if(sheet?.type!=='topup')return;const result=topUp(wallet,sheet.pack.coins);if(result.error){setNotice('не удалось пополнить баланс');return;}setWallet(result.wallet);setSheet(null);setNotice('баланс пополнен');};
  return <div className="market-app">
  <svg width="0" height="0" className="market-filters" aria-hidden="true"><defs><filter id="market-tail-alpha" colorInterpolationFilters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 1 1 1 0 0"/></filter></defs></svg>
- {categories.map(([id,label,C])=><Catalog key={id} category={id} Component={C} active={category===id} onTopUp={()=>setSheet({type:'coins'})} balance={balance} owned={owned} blocked={!!itemId||!!sheet}/>)}
- <MarketHeader balance={balance} onCoins={()=>setSheet({type:'coins'})} blocked={!!itemId||!!sheet}/>
- <nav className="market-categories" aria-label="Разделы маркета" inert={!!itemId||!!sheet} aria-hidden={!!itemId||!!sheet||undefined}>{categories.map(([id,label])=><a href={'#/market/'+id} key={id} aria-current={category===id?'page':undefined}>{label}</a>)}</nav>
- {p&&(p.category==='gifts'?<Gift key={p.id} p={p} blocked={!!sheet} onClose={close} onPurchase={buy} {...{friend,setFriend,comment,setComment,anonymous,setAnonymous}}/>:<Item key={p.id} p={p} blocked={!!sheet} onClose={close} onBuy={buy} onSelect={select} owned={p.owned||owned.includes(p.id)} selected={selected[p.category]===p.id}/>)}
+ {categories.map(([id,label,C])=>id==='maps'?
+  <MapsCatalog key={id} active={category===id} wallet={wallet} selected={mapStyle} price={product('maps',0).price} seasonal={scenario.enabled ? seasonalOffer(scenario) : null} blocked={hasDetail||!!sheet}/>:
+  <Catalog key={id} category={id} Component={C} active={category===id} onTopUp={()=>setSheet({type:'coins'})} balance={balance} owned={owned} blocked={hasDetail||!!sheet}/>)}
+ <MarketHeader balance={balance} onCoins={()=>setSheet({type:'coins'})} blocked={hasDetail||!!sheet}/>
+ <nav className="market-categories" aria-label="Разделы маркета" inert={hasDetail||!!sheet} aria-hidden={hasDetail||!!sheet||undefined}>{categories.map(([id,label])=><a href={'#/market/'+id} key={id} aria-current={category===id?'page':undefined}>{label}</a>)}</nav>
+ {mapSuccess&&gta?<GtaSuccess onClose={close}/>:(gta||standard)&&
+   <MapStyleDetail key={gta?'gta':'standard'} style={gta?'gta':'standard'} canUse={!gta||ownsGta(wallet)} selected={mapStyle===(gta?'gta':'standard')} price={p?.price}
+    theme={theme} setTheme={setTheme} onClose={close} onApply={()=>selectPermanent(gta?'gta':'standard')} onBuy={()=>buy(product('maps',0))} blocked={!!sheet}/>}
+ {seasonalPage&&page==='seasonal'&&<SeasonalDetail scenario={scenario} onClose={close} settingsOrigin={fromSettings?settingsOrigin:''}/>}
+ {seasonalPage&&page!=='seasonal'&&<VipFlow page={page} scenario={scenario} onClose={returnToSeasonal} settingsOrigin={fromSettings?settingsOrigin:''}/>}
+ {p&&!gta&&(p.category==='gifts'?<Gift key={p.id} p={p} blocked={!!sheet} onClose={close} onPurchase={buy} {...{friend,setFriend,comment,setComment,anonymous,setAnonymous}}/>:<Item key={p.id} p={p} blocked={!!sheet} onClose={close} onBuy={buy} onSelect={select} owned={p.owned||owned.includes(p.id)} selected={selected[p.category]===p.id}/>)}
  {itemId&&!p&&<Sheet label="Товар не найден" onClose={close}><h2>товар не найден</h2><button className="market-primary" onClick={close}>вернуться в маркет</button></Sheet>}
  {sheet?.type==='coins'&&<CoinPicker onClose={()=>setSheet(null)} onChoose={pack=>setSheet({type:'topup',pack})} onInfo={()=>setSheet({type:'coin-info'})}/>}
  {sheet&&sheet.type!=='coins'&&<div className="market-scrim" onClick={()=>setSheet(null)}><div className="market-sheet-host" onClick={e=>e.stopPropagation()}><Sheet key={sheet.type} label={sheet.type==='buy'?'Демонстрационная покупка':sheet.type==='topup'?'Подтверждение пополнения':'Блинкоины'} onClose={()=>setSheet(null)}>{sheet.type==='buy'?<><h2>{sheet.p.category==='gifts'?'подарить '+friend+'?':(sheet.p.free?'получить предмет?':'купить предмет?')}</h2><p>{sheet.p.name}</p><strong className="market-total"><img src="./assets/d8eee.svg" alt=""/>{sheet.p.free?'бесплатно':sheet.p.price}</strong><p className="demo-note">Демонстрация покупки — реальные деньги не списываются</p><button className="market-primary" onClick={confirm}>подтвердить</button></>:sheet.type==='topup'?<><h2>пополнить баланс?</h2><strong className="market-total"><img src="./assets/d8eee.svg" alt=""/>{sheet.pack.coins}</strong><p>{sheet.pack.rubles.toLocaleString('ru-RU')} ₽</p><p className="demo-note">Демонстрация оплаты — реальные деньги не списываются</p><button className="market-primary" onClick={confirmTopUp}>пополнить в демо</button><button className="market-back" onClick={()=>setSheet({type:'coins'})}>назад к наборам</button></>:sheet.type==='coin-info'?<><h2>блинкоины</h2><p>Монеты для покупки предметов в маркете</p><p className="demo-note">В прототипе доступно только демонстрационное пополнение, восстановление реальных покупок не подключено</p><button className="market-primary" onClick={()=>setSheet({type:'coins'})}>к наборам</button></>:<><h2>не хватает блинкоинов</h2><p>Твой баланс</p><strong className="market-total"><img src="./assets/d8eee.svg" alt=""/>{balance.toLocaleString('ru-RU')}</strong><p>Для покупки нужно {sheet.required.toLocaleString('ru-RU')}</p><button className="market-primary" onClick={()=>setSheet({type:'coins'})}>пополнить баланс</button></>}</Sheet></div></div>}

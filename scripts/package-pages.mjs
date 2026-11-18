@@ -7,7 +7,7 @@ const output = path.join(workspace, '.pages');
 if (path.dirname(output) !== workspace || path.basename(output) !== '.pages') throw Error('Unexpected publication directory');
 
 // Copy only runtime files, so local reports and source maps stay outside the site
-const runtime = new Set(['.html', '.css', '.js', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.ttf', '.woff', '.woff2', '.ico']);
+const runtime = new Set(['.html', '.css', '.js', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.webm', '.mp4', '.gif', '.ttf', '.woff', '.woff2', '.ico']);
 const copied = [];
 async function copyDirectory(directory, relative = '') {
   for (const entry of await fs.readdir(directory, {withFileTypes: true})) {

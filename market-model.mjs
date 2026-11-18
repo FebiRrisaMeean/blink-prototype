@@ -32,5 +32,5 @@ export function purchase(wallet,p){
  if(wallet.balance<cost)return {wallet,error:'balance'};
  return {wallet:{...wallet,balance:wallet.balance-cost,owned:p.category==='gifts'?wallet.owned:[...wallet.owned,p.id]},error:null};
 }
-export function readWallet(storage){try{return cleanWallet(JSON.parse(storage.getItem('blink-market-demo-v1')));}catch{return cleanWallet(null);}}
-export function saveWallet(storage,wallet){try{storage.setItem('blink-market-demo-v1',JSON.stringify(wallet));return true;}catch{return false;}}
+export function readWallet(storage,key='blink-market-demo-v1'){try{return cleanWallet(JSON.parse(storage.getItem(key)));}catch{return cleanWallet(null);}}
+export function saveWallet(storage,wallet,key='blink-market-demo-v1'){try{storage.setItem(key,JSON.stringify(wallet));return true;}catch{return false;}}

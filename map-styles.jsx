@@ -78,14 +78,15 @@ export function MapThemeBadge({children}) {
   return <span className="style-art-badge"><img src={assets+'71b76.svg'} alt=""/>{children}</span>;
 }
 
-export function MapArtwork({style, className = '', src, theme = 'light', pin = false, limited = false, badge, children}) {
+export function MapArtwork({style, className = '', src, theme = 'light', pin = false, limited = false, badge, children, onImageLoad, onImageError}) {
   const standardDark = assets+'map-style-standard-dark.webp';
   const defaultImage = src || coverImages[style];
   const image = style==='standard' && theme==='dark' ? standardDark : defaultImage;
   return <div className={'style-art '+className} data-style={style} data-theme={theme}>
     <picture className="style-art-picture">
       {style==='standard' && theme==='system' && <source srcSet={standardDark} media="(prefers-color-scheme: dark)"/>}
-      <img className="style-art-image" src={image} alt={'карта · '+styleNames[style]} draggable={false}/>
+      <img className="style-art-image" src={image} alt={'карта · '+styleNames[style]} draggable={false}
+        onLoad={onImageLoad} onError={onImageError}/>
     </picture>
     {children}
     {limited && <img className="style-limited" src={assets+'6a4cf.png'} alt="limited"/>}

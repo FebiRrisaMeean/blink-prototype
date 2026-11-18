@@ -1,4 +1,4 @@
-import React, {useEffect, useId, useRef, useState} from 'react';
+import React, {useEffect, useId, useLayoutEffect, useRef, useState} from 'react';
 import {MapArtwork, mapImages, MapThemeBadge, StyleScreen} from '../../map-styles.jsx';
 
 const sessionKey = 'blink-seasonal-map-v1';
@@ -105,36 +105,62 @@ export function SeasonalApplyMessage({scenario}) {
   return null;
 }
 
+function PreviewLoadError({retry}) {
+  return <div className="seasonal-preview-status" role="alert">
+    не удалось загрузить превью<button type="button" className="style-retry" onClick={retry}>повторить</button>
+  </div>;
+}
+
+function PreviewLoader() {
+  return <div className="seasonal-gallery-loader" role="status" aria-label="Загрузка превью">
+    <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <g><circle cx="20" cy="20" r="18.5" pathLength="360"/></g>
+    </svg>
+  </div>;
+}
+
 function GalleryAnimation({preview, takeFailure}) {
   const [attempt,setAttempt] = useState(0);
   const [status,setStatus] = useState('loading');
-  const [delayElapsed,setDelayElapsed] = useState(false);
+  const simulatedFailure = useRef(false);
   const failure = useRef(takeFailure);
   failure.current = takeFailure;
 
-  useEffect(()=>{
-    const fail = failure.current('preview');
-    const timeout = setTimeout(()=>{
-      if (fail) setStatus('error');
-      setDelayElapsed(true);
-    },delay);
+  useLayoutEffect(()=>{
+    simulatedFailure.current = failure.current('preview');
+    if (!simulatedFailure.current) return;
+    const timeout = setTimeout(()=>setStatus('error'),delay);
     return ()=>clearTimeout(timeout);
   },[attempt]);
 
   function retry() {
     setStatus('loading');
-    setDelayElapsed(false);
     setAttempt(count=>count+1);
   }
 
-  const visibleStatus = delayElapsed ? status : 'loading';
-  return <>
-    {visibleStatus!=='error' && <img key={attempt} className="seasonal-gallery-animation" data-effect={preview.effect}
-      data-ready={visibleStatus==='loaded'} src={retrySource(seasonalAssets+preview.animation,attempt)} alt="" draggable={false}
-      onLoad={()=>setStatus(current=>current==='loading'?'loaded':current)} onError={()=>setStatus('error')}/>}
-    {visibleStatus==='loading' && <div className="seasonal-preview-status" role="status"><span className="seasonal-spinner" aria-hidden="true"/>загружаем превью</div>}
-    {visibleStatus==='error' && <div className="seasonal-preview-status" role="alert">не удалось загрузить превью<button className="style-retry" onClick={retry}>повторить</button></div>}
-  </>;
+  if (status==='error') return <PreviewLoadError retry={retry}/>;
+  return <img key={attempt} className="seasonal-gallery-animation" data-effect={preview.effect}
+    data-ready={status==='loaded'} src={retrySource(seasonalAssets+preview.animation,attempt)} alt="" draggable={false}
+    onLoad={()=>{if (!simulatedFailure.current) setStatus('loaded');}} onError={()=>setStatus('error')}/>;
+}
+
+function GalleryPreview({preview, active, reducedMotion, takeFailure}) {
+  const [attempt,setAttempt] = useState(0);
+  const [status,setStatus] = useState('loading');
+  const ready = status==='loaded';
+
+  function retry() {
+    setStatus('loading');
+    setAttempt(count=>count+1);
+  }
+
+  return <MapArtwork style="seasonal" className={'style-detail-image seasonal-gallery-art'+(ready?'':' is-awaiting-poster')}
+    src={retrySource(seasonalAssets+preview.poster,attempt)} pin={ready && 'detail'}
+    onImageLoad={()=>setStatus('loaded')} onImageError={()=>setStatus('error')}>
+    {active && status==='loading' && <PreviewLoader/>}
+    {active && status==='error' && <PreviewLoadError retry={retry}/>}
+    {active && ready && !reducedMotion && <GalleryAnimation preview={preview} takeFailure={takeFailure}/>}
+  </MapArtwork>;
 }
 
 function WinterGallery({scenario}) {
@@ -199,10 +225,7 @@ function WinterGallery({scenario}) {
         const active = index===page;
         return <div className="seasonal-gallery-page" key={preview.effect} id={id+'-'+index} role="group"
           aria-roledescription="слайд" aria-label={preview.label+', '+(index+1)+' из '+previews.length} aria-hidden={!active}>
-          <MapArtwork style="seasonal" className="style-detail-image seasonal-gallery-art"
-            src={seasonalAssets+preview.poster} pin="detail">
-            {active && !reducedMotion && <GalleryAnimation preview={preview} takeFailure={scenario.takeFailure}/>}
-          </MapArtwork>
+          <GalleryPreview preview={preview} active={active} reducedMotion={reducedMotion} takeFailure={scenario.takeFailure}/>
         </div>;
       })}
     </div>

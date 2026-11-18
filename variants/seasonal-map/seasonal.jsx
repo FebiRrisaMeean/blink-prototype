@@ -1,5 +1,5 @@
 import React, {useEffect, useId, useLayoutEffect, useRef, useState} from 'react';
-import {MapArtwork, mapImages, MapThemeBadge, StyleScreen} from '../../map-styles.jsx';
+import {MapArtwork, MapArtworkLogo, mapImages, MapThemeBadge, StyleScreen} from '../../map-styles.jsx';
 
 const sessionKey = 'blink-seasonal-map-v1';
 const delay = 600;
@@ -155,7 +155,7 @@ function GalleryPreview({preview, active, reducedMotion, takeFailure}) {
   }
 
   return <MapArtwork style="seasonal" className={'style-detail-image seasonal-gallery-art'+(ready?'':' is-awaiting-poster')}
-    src={retrySource(seasonalAssets+preview.poster,attempt)} pin={ready && 'detail'}
+    src={retrySource(seasonalAssets+preview.poster,attempt)} pin={ready && 'detail'} showLogo={false}
     onImageLoad={()=>setStatus('loaded')} onImageError={()=>setStatus('error')}>
     {active && status==='loading' && <PreviewLoader/>}
     {active && status==='error' && <PreviewLoadError retry={retry}/>}
@@ -229,6 +229,7 @@ function WinterGallery({scenario}) {
         </div>;
       })}
     </div>
+    <MapArtworkLogo/>
     <MapThemeBadge>светлая и тёмная</MapThemeBadge>
     {!scenario.applied && <img className="seasonal-detail-badge" src={vipBadge} alt="Blink VIP"/>}
     <div className="seasonal-pager" role="group" aria-label="Кадры галереи">

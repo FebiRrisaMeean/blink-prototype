@@ -78,7 +78,14 @@ export function MapThemeBadge({children}) {
   return <span className="style-art-badge"><img src={assets+'71b76.svg'} alt=""/>{children}</span>;
 }
 
-export function MapArtwork({style, className = '', src, theme = 'light', pin = false, limited = false, badge, children, onImageLoad, onImageError}) {
+export function MapArtworkLogo() {
+  return <img className="style-art-logo" src={assets+'854e6.svg'} alt="Blink Maps"/>;
+}
+
+export function MapArtwork({
+  style, className = '', src, theme = 'light', pin = false, limited = false, badge, children,
+  onImageLoad, onImageError, showLogo = true,
+}) {
   const standardDark = assets+'map-style-standard-dark.webp';
   const defaultImage = src || coverImages[style];
   const image = style==='standard' && theme==='dark' ? standardDark : defaultImage;
@@ -97,7 +104,7 @@ export function MapArtwork({style, className = '', src, theme = 'light', pin = f
           <img className="style-pin-outline" src={assets+'map-style-picker-pin.svg'} alt=""/>
           <img className="style-pin-avatar" src={assets+'map-style-picker-avatar.png'} alt=""/>
         </div>}
-      <img className="style-art-logo" src={assets+'854e6.svg'} alt="Blink Maps"/>
+      {showLogo && <MapArtworkLogo/>}
     </>}
   </div>;
 }

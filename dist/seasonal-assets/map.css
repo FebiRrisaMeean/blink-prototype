@@ -37,11 +37,12 @@
 
 .seasonal-preview {
   --gallery-bottom-space: 12px;
+  --gallery-radius: 24px;
   flex: none; margin-top: 12px; padding-bottom: var(--gallery-bottom-space);
 }
 .seasonal-gallery-track {
   display: flex; width: 100%; overflow: auto hidden; overscroll-behavior-x: contain;
-  scrollbar-width: none; scroll-snap-type: x mandatory; border-radius: 24px;
+  scrollbar-width: none; scroll-snap-type: x mandatory; border-radius: var(--gallery-radius);
   cursor: grab; user-select: none;
 }
 .seasonal-gallery-track[data-dragging] { scroll-snap-type: none; cursor: grabbing }
@@ -117,6 +118,10 @@
 .seasonal-pager button[aria-pressed="true"]::before { width: 32px; background: #fff }
 
 .gta-gallery { --gallery-bottom-space: 0px }
+.gta-gallery-badges {
+  position: absolute; inset: 0 0 var(--gallery-bottom-space);
+  overflow: hidden; border-radius: var(--gallery-radius); pointer-events: none;
+}
 .gta-gallery > .style-art-logo { left: 16px; bottom: 39px }
 .gta-gallery .seasonal-pager button { min-width: 24px }
 .style-detail-image.gta-scene-art[data-style="gta"] .style-art-image {

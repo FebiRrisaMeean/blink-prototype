@@ -79,6 +79,10 @@ export function MapThemeBadge({children}) {
   return <span className="style-art-badge"><img src={assets+'71b76.svg'} alt=""/>{children}</span>;
 }
 
+export function MapLimitedBadge() {
+  return <img className="style-limited" src={assets+'6a4cf.png'} alt="limited"/>;
+}
+
 export function MapArtworkLogo() {
   return <img className="style-art-logo" src={assets+'854e6.svg'} alt="Blink Maps"/>;
 }
@@ -97,7 +101,7 @@ export function MapArtwork({
         onLoad={onImageLoad} onError={onImageError}/>
     </picture>
     {children}
-    {limited && <img className="style-limited" src={assets+'6a4cf.png'} alt="limited"/>}
+    {limited && <MapLimitedBadge/>}
     {badge && <MapThemeBadge>{badge}</MapThemeBadge>}
     {pin && <>
       {pin==='detail'?<img className="style-art-pin-source" src={assets+'ca989.svg'} alt=""/>:

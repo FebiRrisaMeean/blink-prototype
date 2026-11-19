@@ -1,5 +1,5 @@
 import React, {useId, useLayoutEffect, useRef, useState} from 'react';
-import {appliedMapImages, MapArtwork, MapArtworkLogo} from '../../map-styles.jsx';
+import {appliedMapImages, MapArtwork, MapArtworkLogo, MapLimitedBadge, MapThemeBadge} from '../../map-styles.jsx';
 
 export const retrySource = (src, count) => count ? src+'?retry='+count : src;
 
@@ -17,7 +17,7 @@ function PreviewLoader() {
   </div>;
 }
 
-export function MapPreviewFrame({style, src, active, pin = true, limited, badge, className = '', children}) {
+export function MapPreviewFrame({style, src, active, pin = true, className = '', children}) {
   const [attempt,setAttempt] = useState(0);
   const [status,setStatus] = useState('loading');
   const ready = status==='loaded';
@@ -29,7 +29,7 @@ export function MapPreviewFrame({style, src, active, pin = true, limited, badge,
 
   return <MapArtwork style={style}
     className={'style-detail-image seasonal-gallery-art'+(ready?'':' is-awaiting-poster')+(className?' '+className:'')}
-    src={retrySource(src,attempt)} pin={pin && ready && 'detail'} showLogo={false} limited={limited} badge={badge}
+    src={retrySource(src,attempt)} pin={pin && ready && 'detail'} showLogo={false}
     onImageLoad={()=>setStatus('loaded')} onImageError={()=>setStatus('error')}>
     {active && status==='loading' && <PreviewLoader/>}
     {active && status==='error' && <PreviewLoadError retry={retry}/>}
@@ -136,7 +136,11 @@ const gtaFrames = [
 export function GtaGallery() {
   return <MapPreviewGallery className="gta-gallery" label="Галерея стиля «Потрачено»" trackLabel="Превью стиля «Потрачено»" frames={gtaFrames}
     renderFrame={(frame,active)=><MapPreviewFrame style="gta" src={frame.src} active={active} pin={frame.original===true}
-      className={frame.original?'':'gta-scene-art'} limited badge="только тёмная"/>}>
+      className={frame.original?'':'gta-scene-art'}/>}>
+    <div className="gta-gallery-badges">
+      <MapLimitedBadge/>
+      <MapThemeBadge>только тёмная</MapThemeBadge>
+    </div>
     <MapArtworkLogo/>
   </MapPreviewGallery>;
 }

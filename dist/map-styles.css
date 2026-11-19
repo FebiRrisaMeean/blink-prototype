@@ -177,7 +177,8 @@
 .style-picker-options button .style-art { width: 68px; height: 52px; margin-top: 4px; border-radius: 16px; border: 2px solid #444 }
 .style-picker-options button[aria-pressed="true"] { color: #fff }
 .style-picker-options button[aria-pressed="true"] .style-art { border-color: #fff; box-shadow: 0 0 0 4px #fff5 }
-.style-picker-options button .style-coin { position: absolute; top: -2px; right: -5px; font-size: 10px; line-height: 14px; height: 22px; gap: 3px }
+.style-picker-options button :is(.style-coin, .style-picker-vip-badge) { position: absolute; top: -2px; right: -5px }
+.style-picker-options button .style-coin { font-size: 10px; line-height: 14px; height: 22px; gap: 3px }
 .style-picker-options button .style-coin img { width: 15px; height: 15px }
 .style-lock {
   position: absolute; top: -2px; right: -5px; width: 24px; height: 24px;

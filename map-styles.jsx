@@ -131,12 +131,11 @@ function MapCardArtwork({style, packaged = false, newBadge = false, vipBadge, re
   </div>;
 }
 
-function MapCard({style, price, selected, large, href, vipBadge, subscriptionLabel}) {
-  const offer=large && style==='gta';
+function MapCard({style, price, selected, large, offer, href, vipBadge, subscriptionLabel}) {
   const labelId=subscriptionLabel ? 'style-market-subscription-'+style : undefined;
   return <a className={'style-market-card'+(large?' is-large':'')} href={href} aria-describedby={labelId}
     aria-label={styleNames[style]+(selected?', выбрано':price!=null?', '+price+' блинкоинов':'')}>
-    <MapCardArtwork style={style} packaged={offer || large && style==='seasonal'} newBadge={offer} vipBadge={vipBadge}/>
+    <MapCardArtwork style={style} packaged={offer} newBadge={offer && style==='gta'} vipBadge={vipBadge}/>
     {price != null && <Coin price={price}/>}
     {subscriptionLabel && <span id={labelId} className="seasonal-shelf-label">{subscriptionLabel}</span>}
     {selected && <span className="style-chosen"><b aria-hidden="true">✓</b> выбрано</span>}
@@ -148,9 +147,9 @@ export function MapsCatalog({active, wallet, selected, price, seasonal, blocked}
   return <section className="style-market" hidden={!active} inert={blocked} aria-label="Стили карт">
     <div className="style-market-glow" aria-hidden="true"/>
     <div className="style-market-scroll" tabIndex={0} aria-label="Каталог карт">
-      <div className="style-market-offers">
-        {!gtaOwned && <MapCard large style="gta" price={price} href="#/market/maps/item/maps-0"/>}
-        {seasonal && <MapCard large style="seasonal" selected={selected==='seasonal'} href="#/market/maps/seasonal"
+      <div className={'style-market-offers'+(seasonal?' seasonal-market-offers':'')}>
+        {!gtaOwned && <MapCard offer large={!seasonal || seasonal.largeCards.gta} style="gta" price={price} href="#/market/maps/item/maps-0"/>}
+        {seasonal && <MapCard offer large={seasonal.largeCards.seasonal} style="seasonal" selected={selected==='seasonal'} href="#/market/maps/seasonal"
           vipBadge={selected!=='seasonal' && seasonal.badge} subscriptionLabel={selected!=='seasonal' && seasonal.label}/>}
       </div>
       <div className="style-collection-copy"><h2>уже у тебя</h2><p>стили карт в коллекции</p></div>

@@ -11,7 +11,7 @@ import FriendTitle from './.generated/friendtitle.tsx';
 import FriendsGlow from './.generated/glow.tsx';
 import {currentPermanentStyle, appliedMapImages, MapStyleSettings, SettingsIndex, setPermanentStyle, StatusBar, styleNames} from './map-styles.jsx';
 import {SeasonalApplyMessage, SeasonalControls, useSeasonalScenario} from './variants/seasonal-map/seasonal.jsx';
-import {readWallet, saveWallet, product} from './market-model.mjs';
+import {readWallet, saveWallet, getGtaOffer} from './market-model.mjs';
 
 const tabs=[
   {id:'map',label:'карта',icon:'2b6a7.svg',pin:true},
@@ -90,6 +90,7 @@ function App(){
   const [page,subpage,origin]=route.replace(/^#\/?/,'').split('/');
   const active=tabs.some(t=>t.id===page)?page:'map';
   const seasonal=document.body.dataset.variant==='seasonal';
+  const gtaOffer=getGtaOffer(seasonal);
   const themeKey=seasonal?'blink-seasonal-theme-v1':'blink-map-theme-v1';
   const [theme,setTheme]=useState(()=>{
     try {const saved=localStorage.getItem(themeKey);if (['light','dark','system'].includes(saved))return saved;} catch {}
@@ -97,7 +98,7 @@ function App(){
   });
   const walletKey=seasonal?'blink-market-seasonal-v1':undefined;
   const [wallet,setWallet]=useState(()=>readWallet(localStorage,walletKey));
-  const scenario=useSeasonalScenario(seasonal);
+  const scenario=useSeasonalScenario(seasonal,()=>setWallet(previous=>setPermanentStyle(previous,'standard')));
   const selected=scenario.applied?'seasonal':currentPermanentStyle(wallet);
   const styleOverlay=active==='profile'&&['map-style','settings'].includes(subpage);
   const scale=useFit(seasonal);
@@ -120,12 +121,12 @@ function App(){
         <section className="source-screen map-screen" aria-label="Карта" hidden={active!=='map'}><InteractiveMap style={selected} theme={theme}/></section>
         <section className="source-screen friends-screen" aria-label="Друзья" hidden={active!=='friends'}><FriendsScreen active={active==='friends'}/></section>
         <section className="source-screen chats-screen" aria-label="Чаты" hidden={active!=='chats'}><ChatsScreen/></section>
-        <section className="source-screen market-screen" aria-label="Маркет" hidden={active!=='market'}><MarketScreen {...{wallet,setWallet,selected,theme,setTheme,scenario,selectPermanent}}/></section>
+        <section className="source-screen market-screen" aria-label="Маркет" hidden={active!=='market'}><MarketScreen {...{wallet,setWallet,selected,theme,setTheme,scenario,selectPermanent,gtaOffer}}/></section>
         <section className="source-screen profile-screen" aria-label="Профиль" hidden={active!=='profile'}><ProfileScreen mapStyle={styleNames[selected]}/></section>
       </div>
       {!styleOverlay && <TabBar active={active}/>}
       {styleOverlay && (subpage==='settings'?<SettingsIndex onClose={()=>{location.hash='#/profile';}}/>:
-        <MapStyleSettings wallet={wallet} selected={selected} price={product('maps',0).price} theme={theme} setTheme={setTheme}
+        <MapStyleSettings wallet={wallet} selected={selected} price={gtaOffer.price} theme={theme} setTheme={setTheme}
           seasonal={seasonal} vip={scenario.vip} onChoose={selectStyle} onClose={()=>{location.hash=returnTo;}}
           settingsOrigin={origin==='edit'?'edit':'settings'} applyStatus={scenario.applyStatus} feedback={seasonal && <SeasonalApplyMessage scenario={scenario}/>}/>)}
     </div></main>

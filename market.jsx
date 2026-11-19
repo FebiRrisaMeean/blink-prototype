@@ -102,7 +102,7 @@ function Gift({p,onClose,onPurchase,friend,setFriend,comment,setComment,anonymou
  </div>{choose&&<FriendPicker onClose={()=>setChoose(false)} onSelect={name=>{setFriend(name);setChoose(false);}}/>}
  </div>;
 }
-export default function Market({wallet,setWallet,selected:mapStyle,theme,setTheme,scenario,selectPermanent}){
+export default function Market({wallet,setWallet,selected:mapStyle,theme,setTheme,scenario,selectPermanent,gtaOffer}){
  const route=useRoute(),lastCategory=useRef('stickers');
  const isMarket=route[0]==='market';
  if(isMarket&&categories.some(c=>c[0]===route[1]))lastCategory.current=route[1];
@@ -115,6 +115,7 @@ export default function Market({wallet,setWallet,selected:mapStyle,theme,setThem
  const gta=p?.category==='maps', standard=page==='standard';
  const seasonalPage=scenario.enabled && ['seasonal','vip','vip-checkout','vip-success'].includes(page);
  const hasDetail=!!itemId||standard||seasonalPage;
+ const [previewTheme,setPreviewTheme]=useState(null);
  const [sheet,setSheet]=useState(null),[notice,setNotice]=useState(''),[mapSuccess,setMapSuccess]=useState(false);
  const {balance,owned,selected}=wallet;
  const [friend,setFriend]=useState(''),[comment,setComment]=useState(''),[anonymous,setAnonymous]=useState(false);
@@ -124,6 +125,7 @@ export default function Market({wallet,setWallet,selected:mapStyle,theme,setThem
   else go(category);
  };
  const returnToSeasonal=()=>go('maps/seasonal'+(fromSettings?'/'+settingsOrigin:''));
+ useEffect(()=>{if(!seasonalPage)setPreviewTheme(null);},[seasonalPage]);
  useEffect(()=>{setSheet(null);setMapSuccess(false);},[route.join('/')]);
  useEffect(()=>{if(!notice)return;const t=setTimeout(()=>setNotice(''),2800);return()=>clearTimeout(t);},[notice]);
  const buy=item=>setSheet({type:'buy',p:item});
@@ -148,14 +150,16 @@ export default function Market({wallet,setWallet,selected:mapStyle,theme,setThem
  return <div className="market-app">
  <svg width="0" height="0" className="market-filters" aria-hidden="true"><defs><filter id="market-tail-alpha" colorInterpolationFilters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 1 1 1 0 0"/></filter></defs></svg>
  {categories.map(([id,label,C])=>id==='maps'?
-  <MapsCatalog key={id} active={category===id} wallet={wallet} selected={mapStyle} price={product('maps',0).price} seasonal={scenario.enabled ? seasonalOffer(scenario) : null} blocked={hasDetail||!!sheet}/>:
+  <MapsCatalog key={id} active={category===id} wallet={wallet} selected={mapStyle} price={gtaOffer.price} seasonal={scenario.enabled ? seasonalOffer(scenario) : null} blocked={hasDetail||!!sheet}/>:
   <Catalog key={id} category={id} Component={C} active={category===id} onTopUp={()=>setSheet({type:'coins'})} balance={balance} owned={owned} blocked={hasDetail||!!sheet}/>)}
  <MarketHeader balance={balance} onCoins={()=>setSheet({type:'coins'})} blocked={hasDetail||!!sheet}/>
  <nav className="market-categories" aria-label="Разделы маркета" inert={hasDetail||!!sheet} aria-hidden={hasDetail||!!sheet||undefined}>{categories.map(([id,label])=><a href={'#/market/'+id} key={id} aria-current={category===id?'page':undefined}>{label}</a>)}</nav>
  {mapSuccess&&gta?<GtaSuccess onClose={close}/>:(gta||standard)&&
-   <MapStyleDetail key={gta?'gta':'standard'} style={gta?'gta':'standard'} canUse={!gta||ownsGta(wallet)} selected={mapStyle===(gta?'gta':'standard')} price={p?.price}
-    theme={theme} setTheme={setTheme} onClose={close} onApply={()=>selectPermanent(gta?'gta':'standard')} onBuy={()=>buy(product('maps',0))} blocked={!!sheet}/>}
- {seasonalPage&&page==='seasonal'&&<SeasonalDetail scenario={scenario} onClose={close} settingsOrigin={fromSettings?settingsOrigin:''}/>}
+   <MapStyleDetail key={gta?'gta':'standard'} style={gta?'gta':'standard'} canUse={!gta||ownsGta(wallet)} selected={mapStyle===(gta?'gta':'standard')} price={gtaOffer.price}
+    theme={theme} setTheme={setTheme} onClose={close} onApply={()=>selectPermanent(gta?'gta':'standard')} onBuy={()=>buy(gtaOffer)} blocked={!!sheet}/>}
+ {seasonalPage&&page==='seasonal'&&<SeasonalDetail scenario={scenario} theme={scenario.applied?theme:previewTheme??theme}
+    onThemeChange={scenario.applied?setTheme:setPreviewTheme} onApplyTheme={value=>{setTheme(value);setPreviewTheme(null);}}
+    onClose={close} settingsOrigin={fromSettings?settingsOrigin:''}/>}
  {seasonalPage&&page!=='seasonal'&&<VipFlow page={page} scenario={scenario} onClose={returnToSeasonal} settingsOrigin={fromSettings?settingsOrigin:''}/>}
  {p&&!gta&&(p.category==='gifts'?<Gift key={p.id} p={p} blocked={!!sheet} onClose={close} onPurchase={buy} {...{friend,setFriend,comment,setComment,anonymous,setAnonymous}}/>:<Item key={p.id} p={p} blocked={!!sheet} onClose={close} onBuy={buy} onSelect={select} owned={p.owned||owned.includes(p.id)} selected={selected[p.category]===p.id}/>)}
  {itemId&&!p&&<Sheet label="Товар не найден" onClose={close}><h2>товар не найден</h2><button className="market-primary" onClick={close}>вернуться в маркет</button></Sheet>}

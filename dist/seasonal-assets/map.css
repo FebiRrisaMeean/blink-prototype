@@ -10,6 +10,24 @@
 .style-market-art.is-packaged[data-card-style="seasonal"] .style-art-image {
   inset: 0; width: 100%; height: 100%;
 }
+.seasonal-market-offers { flex-flow: row wrap; justify-content: center; align-items: flex-start; column-gap: 0 }
+.seasonal-market-offers .style-market-card:not(.is-large) { --package-scale: .8 }
+.seasonal-market-offers .style-market-art.is-packaged::before { border-width: calc(6.19px * var(--package-scale, 1)) }
+.seasonal-market-offers .style-card-film {
+  width: calc(261.2px * var(--package-scale, 1)); height: calc(267.4px * var(--package-scale, 1));
+  left: calc(-33.4px * var(--package-scale, 1)); top: calc(-29.6px * var(--package-scale, 1));
+}
+.seasonal-market-offers .style-card-new {
+  width: calc(113px * var(--package-scale, 1)); left: calc(-15px * var(--package-scale, 1));
+}
+.seasonal-market-offers .seasonal-shelf-badge {
+  width: calc(56px * var(--package-scale, 1)); left: calc(14px * var(--package-scale, 1));
+  top: calc(13px * var(--package-scale, 1));
+}
+.seasonal-size-control { border: 0; min-width: 0; margin: 8px 0 0; padding: 0 }
+.seasonal-size-control legend { font-weight: 700 }
+.seasonal-size-control .seasonal-control-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 3px 0 0 }
+.seasonal-size-reset { margin: 6px 0 4px; color: #b0daff; text-decoration: underline; cursor: pointer }
 
 .seasonal-preview {
   --gallery-bottom-space: 12px;
@@ -21,6 +39,8 @@
   cursor: grab; user-select: none;
 }
 .seasonal-gallery-track[data-dragging] { scroll-snap-type: none; cursor: grabbing }
+.seasonal-gallery-track.is-static-preview { overflow: hidden; scroll-snap-type: none; cursor: default }
+.is-static-preview > .seasonal-gallery-page[aria-hidden="true"] { display: none }
 .seasonal-gallery-track:focus-visible, .seasonal-pager button:focus-visible { outline: 2px solid white; outline-offset: 2px }
 .seasonal-gallery-page { position: relative; flex: 0 0 100%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always }
 .style-detail-image.seasonal-gallery-art { margin-top: 0; border-radius: 0 }

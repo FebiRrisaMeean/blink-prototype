@@ -18,6 +18,10 @@ export function product(category,index){
  const owned=category==='stickers'?index>=6&&index<10:category==='tails'?index>=6&&index<9:false;
  return {id:category+'-'+index,category,index,name:productNames[category][index],owned,archived:category==='stickers'?index>=10:category==='tails'?index>=9:false,soon:category==='tails'&&index===5,price:category==='gifts'?(index===0?5000:index===2?100:300):300,free:category==='tails'&&[2,3].includes(index)||category==='stickers'&&index===3||category==='gifts'&&index===3};
 }
+export function getGtaOffer(seasonal=false){
+ const offer=product('maps',0);
+ return seasonal?{...offer,price:90}:offer;
+}
 export function productById(id){const m=typeof id==='string'&&id.match(/^(stickers|tails|maps|gifts)-(0|[1-9]\d*)$/);return m?product(m[1],Number(m[2])):null;}
 export function cleanWallet(value){
  const v=value&&typeof value==='object'?value:{};

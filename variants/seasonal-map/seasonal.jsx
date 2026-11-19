@@ -1,9 +1,10 @@
 import React, {useEffect, useId, useLayoutEffect, useRef, useState} from 'react';
-import {MapArtwork, MapArtworkLogo, mapImages, MapThemeBadge, StyleScreen} from '../../map-styles.jsx';
+import {MapArtwork, MapArtworkLogo, mapImages, MapThemeBadge, StyleScreen, StyleTheme} from '../../map-styles.jsx';
 
 const sessionKey = 'blink-seasonal-map-v1';
 const delay = 600;
-const baseState = {vip: 'none', applied: false};
+const defaultLargeCards = {gta: false, seasonal: false};
+const baseState = {vip: 'none', applied: false, gallerySlider: false, largeCards: defaultLargeCards};
 const seasonalAssets = './seasonal-assets/';
 const vipBadge = seasonalAssets+'market-vip-badge.png';
 const previews = [
@@ -12,14 +13,18 @@ const previews = [
 ];
 
 export function seasonalOffer(scenario) {
-  return {badge:vipBadge, label:scenario.vip?'бесплатно':'blink vip'};
+  return {badge:vipBadge, label:scenario.vip?'бесплатно':'blink vip', largeCards:scenario.largeCards};
 }
 
 function initialState() {
   try {
     const value = JSON.parse(sessionStorage.getItem(sessionKey));
     if (value && ['none','active','expired'].includes(value.vip)) {
-      return {vip: value.vip, applied: value.vip==='active' && value.applied === true};
+      return {
+        vip: value.vip, applied: value.vip==='active' && value.applied === true,
+        gallerySlider: value.gallerySlider===true,
+        largeCards: {gta:value.largeCards?.gta===true, seasonal:value.largeCards?.seasonal===true},
+      };
     }
   } catch {}
   return baseState;
@@ -35,7 +40,7 @@ async function loadArtwork(src, fail) {
   if (!(await decoded) || fail) throw Error('Map image unavailable');
 }
 
-export function useSeasonalScenario(enabled) {
+export function useSeasonalScenario(enabled, onSeasonalAccessLost) {
   const [state, setState] = useState(()=>enabled?initialState():baseState);
   const [applyStatus, setApplyStatus] = useState('idle');
   const failures = useRef(new Set());
@@ -65,13 +70,23 @@ export function useSeasonalScenario(enabled) {
   }
   function setVip(value) {
     stopApply();
-    setState(previous=>({vip:value,applied:value==='active' && previous.applied}));
+    if (value!=='active' && state.applied) onSeasonalAccessLost();
+    setState(previous=>({...previous,vip:value,applied:value==='active' && previous.applied}));
+  }
+  function setCardSize(style, large) {
+    setState(previous=>({...previous,largeCards:{...previous.largeCards,[style]:large}}));
+  }
+  function resetCardSizes() {
+    setState(previous=>({...previous,largeCards:defaultLargeCards}));
+  }
+  function setGallerySlider(gallerySlider) {
+    setState(previous=>({...previous,gallerySlider}));
   }
   function deselect() {
     stopApply();
     setState(previous=>previous.applied?{...previous,applied:false}:previous);
   }
-  async function apply() {
+  async function apply(onApplied) {
     if (!vip || applyStatus==='loading') return;
     const request = ++activeRequest.current;
     setApplyStatus('loading');
@@ -79,12 +94,16 @@ export function useSeasonalScenario(enabled) {
       await loadArtwork(retrySource(mapImages.seasonal,applyAttempt.current++),takeFailure('apply'));
       if (request!==activeRequest.current) return;
       setState(previous=>previous.vip==='active'?{...previous,applied:true}:previous);
+      onApplied?.();
       setApplyStatus('idle');
     } catch {
       if (request===activeRequest.current) setApplyStatus('error');
     }
   }
-  return {enabled, vip, vipStatus:state.vip, applied:state.applied, applyStatus, pending, armFailure, takeFailure, apply, deselect, setVip};
+  return {
+    enabled, vip, vipStatus:state.vip, applied:state.applied, applyStatus, pending, armFailure, takeFailure, apply, deselect, setVip,
+    largeCards:state.largeCards, setCardSize, resetCardSizes, gallerySlider:state.gallerySlider, setGallerySlider,
+  };
 }
 
 export function SeasonalControls({scenario}) {
@@ -93,15 +112,24 @@ export function SeasonalControls({scenario}) {
     <div className="seasonal-control-buttons" role="group" aria-label="Подписка в прототипе">
       {[['none','без VIP'],['active','VIP активен'],['expired','VIP закончился']].map(([state,label])=><button key={state} aria-pressed={scenario.vipStatus===state} onClick={()=>scenario.setVip(state)}>{label}</button>)}
     </div>
+    {[['gta','Потрачено'],['seasonal','Зима']].map(([style,label])=><fieldset className="seasonal-size-control" key={style}>
+      <legend>{label}</legend>
+      <div className="seasonal-control-buttons">
+        {[[false,'маленькая'],[true,'большая']].map(([large,size])=><button key={size} type="button"
+          aria-pressed={scenario.largeCards[style]===large} onClick={()=>scenario.setCardSize(style,large)}>{size}</button>)}
+      </div>
+    </fieldset>)}
+    <button type="button" className="seasonal-size-reset" onClick={scenario.resetCardSizes}>сбросить размеры</button>
+    <label><input type="checkbox" checked={scenario.gallerySlider} onChange={event=>scenario.setGallerySlider(event.target.checked)}/> слайдер превью</label>
     <label><input type="checkbox" checked={scenario.pending.includes('preview')} onChange={()=>scenario.armFailure('preview')}/> сбой следующей загрузки превью</label>
     <label><input type="checkbox" checked={scenario.pending.includes('apply')} onChange={()=>scenario.armFailure('apply')}/> сбой следующей попытки применить</label>
   </details>;
 }
 
-export function SeasonalApplyMessage({scenario}) {
+export function SeasonalApplyMessage({scenario, onRetry=()=>scenario.apply()}) {
   if (!scenario.vip) return null;
   if (scenario.applyStatus==='loading') return <p className="style-feedback" role="status">загружаем стиль карты…</p>;
-  if (scenario.applyStatus==='error') return <div className="style-feedback" role="alert">не удалось применить стиль <button className="style-link" onClick={scenario.apply}>повторить</button></div>;
+  if (scenario.applyStatus==='error') return <div className="style-feedback" role="alert">не удалось применить стиль <button className="style-link" onClick={onRetry}>повторить</button></div>;
   return null;
 }
 
@@ -163,26 +191,42 @@ function GalleryPreview({preview, active, reducedMotion, takeFailure}) {
   </MapArtwork>;
 }
 
-function WinterGallery({scenario}) {
+function useMediaQuery(query) {
+  const [matches,setMatches] = useState(()=>matchMedia(query).matches);
+  useEffect(()=>{
+    const media = matchMedia(query);
+    const update = ()=>setMatches(media.matches);
+    media.addEventListener('change',update);
+    update();
+    return ()=>media.removeEventListener('change',update);
+  },[query]);
+  return matches;
+}
+
+function WinterGallery({scenario, theme, onThemeChange}) {
   const track = useRef(null);
   const drag = useRef(null);
   const id = useId();
   const [page,setPage] = useState(0);
-  const motionQuery = '(prefers-reduced-motion: reduce)';
-  const [reducedMotion,setReducedMotion] = useState(()=>matchMedia(motionQuery).matches);
-  useEffect(()=>{
-    const media = matchMedia(motionQuery);
-    const updateMotion = ()=>setReducedMotion(media.matches);
-    media.addEventListener('change',updateMotion);
-    updateMotion();
-    return ()=>media.removeEventListener('change',updateMotion);
-  },[]);
+  const slider = scenario.gallerySlider;
+  const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+  const darkDevice = useMediaQuery('(prefers-color-scheme: dark)');
+  const themePage = theme==='dark' || theme==='system' && darkDevice ? 1 : 0;
+  const activePage = slider?page:themePage;
 
   function goTo(index) {
     const viewport = track.current;
     const next = Math.max(0,Math.min(previews.length-1,index));
     viewport.scrollTo({left:next*viewport.clientWidth,behavior:'instant'});
     setPage(next);
+  }
+  useLayoutEffect(()=>{
+    if (slider) goTo(themePage);
+  },[slider,theme,themePage]);
+
+  function chooseTheme(value) {
+    if (slider && value===theme) goTo(themePage);
+    onThemeChange(value);
   }
   function keyDown(event) {
     if (event.target!==track.current) return;
@@ -216,15 +260,24 @@ function WinterGallery({scenario}) {
     goTo(next);
   }
 
-  return <div className="seasonal-preview" role="group" aria-label="Галерея зимней карты">
-    <div className="seasonal-gallery-track" tabIndex={0} aria-label="Превью зимней карты"
-      ref={track} onScroll={event=>setPage(Math.round(event.currentTarget.scrollLeft/event.currentTarget.clientWidth))}
-      onKeyDown={keyDown} onPointerDown={startDrag} onPointerMove={moveDrag}
-      onPointerUp={endDrag} onPointerCancel={endDrag} onPointerLeave={event=>{if(!track.current.hasPointerCapture(event.pointerId))endDrag(event);}}>
+  const sliderHandlers = slider ? {
+    onScroll: event=>setPage(Math.round(event.currentTarget.scrollLeft/event.currentTarget.clientWidth)),
+    onKeyDown: keyDown,
+    onPointerDown: startDrag,
+    onPointerMove: moveDrag,
+    onPointerUp: endDrag,
+    onPointerCancel: endDrag,
+    onPointerLeave: event=>{if(!track.current.hasPointerCapture(event.pointerId))endDrag(event);},
+  } : {};
+
+  return <><div className="seasonal-preview" role="group" aria-label="Галерея зимней карты">
+    <div className={'seasonal-gallery-track'+(slider?'':' is-static-preview')} tabIndex={slider?0:undefined}
+      aria-label="Превью зимней карты" ref={track} {...sliderHandlers}>
       {previews.map((preview,index)=>{
-        const active = index===page;
+        const active = index===activePage;
         return <div className="seasonal-gallery-page" key={preview.effect} id={id+'-'+index} role="group"
-          aria-roledescription="слайд" aria-label={preview.label+', '+(index+1)+' из '+previews.length} aria-hidden={!active}>
+          aria-roledescription={slider?'слайд':undefined}
+          aria-label={preview.label+(slider?', '+(index+1)+' из '+previews.length:'')} aria-hidden={!active}>
           <GalleryPreview preview={preview} active={active} reducedMotion={reducedMotion} takeFailure={scenario.takeFailure}/>
         </div>;
       })}
@@ -232,24 +285,29 @@ function WinterGallery({scenario}) {
     <MapArtworkLogo/>
     <MapThemeBadge>светлая и тёмная</MapThemeBadge>
     {!scenario.applied && <img className="seasonal-detail-badge" src={vipBadge} alt="Blink VIP"/>}
-    <div className="seasonal-pager" role="group" aria-label="Кадры галереи">
+    {slider && <div className="seasonal-pager" role="group" aria-label="Кадры галереи">
       {previews.map((preview,index)=><button key={preview.effect} type="button" aria-label={preview.label}
         aria-controls={id+'-'+index} aria-pressed={page===index} onClick={()=>goTo(index)}/>)}
-    </div>
-  </div>;
+    </div>}
+  </div>
+  <StyleTheme value={theme} onChange={chooseTheme}/>
+  </>;
 }
 
-export function SeasonalDetail({scenario, onClose, settingsOrigin}) {
+export function SeasonalDetail({scenario, theme, onThemeChange, onApplyTheme, onClose, settingsOrigin}) {
+  const themeForApply = useRef(theme);
+  themeForApply.current = theme;
+  const apply = ()=>scenario.apply(()=>onApplyTheme(themeForApply.current));
   return <StyleScreen label="Зима · стиль карты" appearance="sheet" onClose={onClose}>
     <div className="style-detail-scroll">
       <h1>зима</h1>
       <p className="style-detail-description">сезонный стиль Blink. карта меняется вместе со временем года</p>
-      <WinterGallery scenario={scenario}/>
-      <SeasonalApplyMessage scenario={scenario}/>
+      <WinterGallery scenario={scenario} theme={theme} onThemeChange={onThemeChange}/>
+      <SeasonalApplyMessage scenario={scenario} onRetry={apply}/>
     </div>
     <div className="style-detail-footer">
       {scenario.applied ? <span className="style-already" role="status">уже выбрано</span> :
-        scenario.vip ? <button className="style-primary" disabled={scenario.applyStatus!=='idle'} onClick={scenario.apply}>{scenario.applyStatus==='loading'?'загружаем стиль…':'применить'}</button> :
+      scenario.vip ? <button className="style-primary" disabled={scenario.applyStatus!=='idle'} onClick={apply}>{scenario.applyStatus==='loading'?'загружаем стиль…':'применить'}</button> :
         <a className="style-primary" href={'#/market/maps/vip'+(settingsOrigin?'/'+settingsOrigin:'')}>получить с Blink VIP</a>}
     </div>
   </StyleScreen>;

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {cleanWallet,product,productById,purchase,readWallet,saveWallet,topUp,coinPacks} from '../market-model.mjs';
+import {cleanWallet,product,productById,getGtaOffer,purchase,readWallet,saveWallet,topUp,coinPacks} from '../market-model.mjs';
 test('stored data is validated and inaccessible selections are discarded',()=>{
  assert.deepEqual(cleanWallet({balance:'12',owned:{},selected:{maps:'maps-2'}}),{balance:55000,owned:[],selected:{}});
  assert.deepEqual(cleanWallet({balance:300,owned:['maps-0','maps-0','tails-5','stickers-11','gifts-0','bogus'],selected:{maps:'maps-0',tails:'tails-9'}}),{balance:300,owned:['maps-0'],selected:{maps:'maps-0'}});
@@ -12,6 +12,14 @@ test('purchase is atomic and cannot charge twice for an owned item',()=>{
  const repeated=purchase(first.wallet,product('maps',0));assert.equal(repeated.error,'owned');assert.equal(repeated.wallet,first.wallet);
  const unavailable=purchase(before,product('tails',5));assert.equal(unavailable.error,'unavailable');assert.equal(unavailable.wallet,before);
  const insufficient=purchase(before,product('gifts',0));assert.equal(insufficient.error,'balance');assert.equal(insufficient.wallet,before);
+});
+test('the seasonal GTA offer charges 90 coins and keeps the same ownership ID',()=>{
+ const offer=getGtaOffer(true);
+ assert.deepEqual(offer,{...productById('maps-0'),price:90});
+ const insufficient=cleanWallet({balance:89});
+ assert.deepEqual(purchase(insufficient,offer),{wallet:insufficient,error:'balance'});
+ assert.deepEqual(purchase(cleanWallet({balance:90}),offer).wallet,{balance:0,owned:['maps-0'],selected:{}});
+ assert.equal(getGtaOffer().price,300);
 });
 test('free items cost zero and gifts remain repeatable',()=>{
  const free=purchase(cleanWallet({balance:0}),product('stickers',3));assert.equal(free.error,null);assert.equal(free.wallet.balance,0);assert.deepEqual(free.wallet.owned,['stickers-3']);

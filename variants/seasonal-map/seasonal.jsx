@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
-import {MapArtworkLogo, mapImages, MapStyleFriends, MapThemeBadge, seasonalVipBadge, StyleScreen, StyleTheme} from '../../map-styles.jsx';
+import {appliedMapImages, MapArtworkLogo, MapStyleFriends, MapThemeBadge, seasonalVipBadge, StyleScreen, StyleTheme} from '../../map-styles.jsx';
 import {MapPreviewFrame, MapPreviewGallery, PreviewLoadError, retrySource} from './gallery.jsx';
 
 const sessionKey = 'blink-seasonal-map-v1';
@@ -34,11 +34,19 @@ function initialState() {
 }
 
 async function loadArtwork(src, fail) {
-  const image = new Image();
-  image.src = src;
-  const decoded = image.decode().then(()=>true,()=>false);
-  await new Promise(resolve=>setTimeout(resolve,delay));
-  if (!(await decoded) || fail) throw Error('Map image unavailable');
+  const transition = new Promise(resolve=>setTimeout(resolve,delay));
+  if (fail) {
+    await transition;
+    throw Error('Map image unavailable');
+  }
+
+  const decode = async () => {
+    const response = await fetch(src,{signal:AbortSignal.timeout(12000),priority:'high'});
+    if (!response.ok) throw Error('Map image unavailable');
+    const bitmap = await createImageBitmap(await response.blob());
+    bitmap.close();
+  };
+  await Promise.all([transition,decode()]);
 }
 
 export function useSeasonalScenario(enabled, onSeasonalAccessLost) {
@@ -92,7 +100,7 @@ export function useSeasonalScenario(enabled, onSeasonalAccessLost) {
     const request = ++activeRequest.current;
     setApplyStatus('loading');
     try {
-      await loadArtwork(retrySource(mapImages.seasonal,applyAttempt.current++),takeFailure('apply'));
+      await loadArtwork(retrySource(appliedMapImages.seasonal,applyAttempt.current++),takeFailure('apply'));
       if (request!==activeRequest.current) return;
       setState(previous=>previous.vip==='active'?{...previous,applied:true}:previous);
       onApplied?.();

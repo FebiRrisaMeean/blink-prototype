@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {cleanWallet,product,productById,getGtaOffer,purchase,readWallet,saveWallet,topUp,coinPacks} from '../market-model.mjs';
+import {cleanWallet,product,productById,getGtaOffer,purchase,readSharedWallet,readWallet,saveWallet,sharedWalletKey,topUp,coinPacks} from '../market-model.mjs';
 test('stored data is validated and inaccessible selections are discarded',()=>{
  assert.deepEqual(cleanWallet({balance:'12',owned:{},selected:{maps:'maps-2'}}),{balance:55000,owned:[],selected:{}});
  assert.deepEqual(cleanWallet({balance:300,owned:['maps-0','maps-0','tails-5','stickers-11','gifts-0','bogus'],selected:{maps:'maps-0',tails:'tails-9'}}),{balance:300,owned:['maps-0'],selected:{maps:'maps-0'}});
@@ -37,4 +37,26 @@ test('demo top-up adds the selected pack and preserves the collection',()=>{
 test('invalid and overflowing demo top-ups do not change the wallet',()=>{
  const before=cleanWallet({balance:0});for(const coins of [-1,0,12,NaN,Infinity]){const result=topUp(before,coins);assert.equal(result.error,'unavailable');assert.equal(result.wallet,before);}
  const full=cleanWallet({balance:Number.MAX_SAFE_INTEGER});assert.equal(topUp(full,10).wallet,full);assert.equal(topUp(full,10).error,'balance');
+});
+test('the shared wallet keeps the old base balance and choices and imports both collections',()=>{
+ const entries=new Map([
+  ['blink-market-demo-v1',JSON.stringify({balance:417,owned:['tails-0','maps-0'],selected:{tails:'tails-0',maps:'maps-0'}})],
+  ['blink-market-seasonal-v1',JSON.stringify({balance:90,owned:['stickers-0','maps-0'],selected:{stickers:'stickers-0'}})],
+ ]);
+ const storage={getItem:key=>entries.get(key)??null,setItem:(key,value)=>entries.set(key,value)};
+ const migrated=readSharedWallet(storage);
+ assert.deepEqual(migrated,{balance:417,owned:['tails-0','maps-0','stickers-0'],selected:{tails:'tails-0',maps:'maps-0'}});
+ const saved={...migrated,balance:0,selected:{}};
+ saveWallet(storage,saved,sharedWalletKey);
+ assert.deepEqual(readSharedWallet(storage),saved);
+ assert.equal(readWallet(storage).balance,417);
+});
+
+test('a seasonal-only wallet migrates even if the old base record is unavailable',()=>{
+ const seasonal={balance:90,owned:['maps-0'],selected:{maps:'maps-0'}};
+ const entries=new Map([
+  ['blink-market-demo-v1','invalid'],
+  ['blink-market-seasonal-v1',JSON.stringify(seasonal)],
+ ]);
+ assert.deepEqual(readSharedWallet({getItem:key=>entries.get(key)??null}),seasonal);
 });

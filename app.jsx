@@ -11,7 +11,7 @@ import FriendTitle from './.generated/friendtitle.tsx';
 import FriendsGlow from './.generated/glow.tsx';
 import {currentPermanentStyle, appliedMapImages, MapStyleSettings, SettingsIndex, setPermanentStyle, StatusBar, styleNames} from './map-styles.jsx';
 import {SeasonalApplyMessage, SeasonalControls, useSeasonalScenario} from './variants/seasonal-map/seasonal.jsx';
-import {readWallet, saveWallet, getGtaOffer} from './market-model.mjs';
+import {readSharedWallet, saveWallet, sharedWalletKey, getGtaOffer} from './market-model.mjs';
 
 const tabs=[
   {id:'map',label:'карта',icon:'2b6a7.svg',pin:true},
@@ -80,28 +80,36 @@ function FriendsScreen({active}){
     <div className="home-indicator"/>
   </div>;
 }
-function useFit(seasonal){
+function useFit(showControls){
   const [scale,setScale]=useState(1);
-  useEffect(()=>{const fit=()=>setScale(Math.min(innerWidth/390,(innerHeight-(seasonal&&innerWidth<=840?42:0))/844,1));fit();addEventListener('resize',fit);return()=>removeEventListener('resize',fit);},[seasonal]);
+  useEffect(()=>{const fit=()=>setScale(Math.min(innerWidth/390,(innerHeight-(showControls&&innerWidth<=840?42:0))/844,1));fit();addEventListener('resize',fit);return()=>removeEventListener('resize',fit);},[showControls]);
   return scale;
 }
+const sharedThemeKey='blink-map-theme-v2';
+
+function readSharedTheme(storage,seasonalApplied) {
+  const legacyKeys=seasonalApplied?['blink-seasonal-theme-v1','blink-map-theme-v1']:['blink-map-theme-v1','blink-seasonal-theme-v1'];
+  try {
+    for (const key of [sharedThemeKey,...legacyKeys]) {
+      const value=storage.getItem(key);
+      if (['light','dark','system'].includes(value))return value;
+    }
+  } catch {}
+  return 'light';
+}
+
 function App(){
   const [route,setRoute]=useState(readRoute);
   const [page,subpage,origin]=route.replace(/^#\/?/,'').split('/');
   const active=tabs.some(t=>t.id===page)?page:'map';
-  const seasonal=document.body.dataset.variant==='seasonal';
-  const gtaOffer=getGtaOffer(seasonal);
-  const themeKey=seasonal?'blink-seasonal-theme-v1':'blink-map-theme-v1';
-  const [theme,setTheme]=useState(()=>{
-    try {const saved=localStorage.getItem(themeKey);if (['light','dark','system'].includes(saved))return saved;} catch {}
-    return 'light';
-  });
-  const walletKey=seasonal?'blink-market-seasonal-v1':undefined;
-  const [wallet,setWallet]=useState(()=>readWallet(localStorage,walletKey));
-  const scenario=useSeasonalScenario(seasonal,()=>setWallet(previous=>setPermanentStyle(previous,'standard')));
+  const gtaOffer=getGtaOffer(true);
+  const [wallet,setWallet]=useState(()=>readSharedWallet(localStorage));
+  const scenario=useSeasonalScenario(true,()=>setWallet(previous=>setPermanentStyle(previous,'standard')));
+  const [theme,setTheme]=useState(()=>readSharedTheme(localStorage,scenario.applied));
   const selected=scenario.applied?'seasonal':currentPermanentStyle(wallet);
   const styleOverlay=active==='profile'&&['map-style','settings'].includes(subpage);
-  const scale=useFit(seasonal);
+  const showSeasonalControls=active==='market'&&subpage==='maps'||active==='profile'&&subpage==='map-style';
+  const scale=useFit(showSeasonalControls);
   const returnTo=origin==='market'?'#/market/maps/seasonal':origin==='edit'?'#/profile':'#/profile/settings';
   function selectPermanent(style) {
     scenario.deselect();
@@ -112,8 +120,8 @@ function App(){
     else selectPermanent(style);
   }
   useEffect(()=>{const update=()=>setRoute(readRoute());addEventListener('hashchange',update);if(!location.hash)history.replaceState(null,'','#/map');return()=>removeEventListener('hashchange',update);},[]);
-  useEffect(()=>{try {localStorage.setItem(themeKey,theme);} catch {}},[theme,themeKey]);
-  useEffect(()=>{saveWallet(localStorage,wallet,walletKey);},[wallet,walletKey]);
+  useEffect(()=>{try {localStorage.setItem(sharedThemeKey,theme);} catch {}},[theme]);
+  useEffect(()=>{saveWallet(localStorage,wallet,sharedWalletKey);},[wallet]);
   useEffect(()=>{document.title='Blink — '+tabs.find(t=>t.id===active).label;},[active]);
   return <>
     <main className="stage" style={{width:390*scale,height:844*scale}}><div className="phone" style={{transform:'scale('+scale+')'}}>
@@ -127,10 +135,10 @@ function App(){
       {!styleOverlay && <TabBar active={active}/>}
       {styleOverlay && (subpage==='settings'?<SettingsIndex onClose={()=>{location.hash='#/profile';}}/>:
         <MapStyleSettings wallet={wallet} selected={selected} price={gtaOffer.price} theme={theme} setTheme={setTheme}
-          seasonal={seasonal} vip={scenario.vip} onChoose={selectStyle} onClose={()=>{location.hash=returnTo;}}
-          settingsOrigin={origin==='edit'?'edit':'settings'} applyStatus={scenario.applyStatus} feedback={seasonal && <SeasonalApplyMessage scenario={scenario}/>}/>)}
+          seasonal vip={scenario.vip} onChoose={selectStyle} onClose={()=>{location.hash=returnTo;}}
+          settingsOrigin={origin==='edit'?'edit':'settings'} applyStatus={scenario.applyStatus} feedback={<SeasonalApplyMessage scenario={scenario}/>}/>)}
     </div></main>
-    {seasonal && <SeasonalControls scenario={scenario}/>}
+    {showSeasonalControls && <SeasonalControls scenario={scenario}/>}
   </>;
 }
 createRoot(document.getElementById('root')).render(<App/>);

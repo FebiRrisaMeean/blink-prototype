@@ -36,5 +36,29 @@ export function purchase(wallet,p){
  if(wallet.balance<cost)return {wallet,error:'balance'};
  return {wallet:{...wallet,balance:wallet.balance-cost,owned:p.category==='gifts'?wallet.owned:[...wallet.owned,p.id]},error:null};
 }
-export function readWallet(storage,key='blink-market-demo-v1'){try{return cleanWallet(JSON.parse(storage.getItem(key)));}catch{return cleanWallet(null);}}
+const legacyWalletKey = 'blink-market-demo-v1';
+const seasonalWalletKey = 'blink-market-seasonal-v1';
+export const sharedWalletKey = 'blink-market-unified-v2';
+
+function storedWallet(storage,key) {
+ try {
+  const value=JSON.parse(storage.getItem(key));
+  if(value && typeof value==='object' && !Array.isArray(value))return cleanWallet(value);
+ } catch {}
+ return null;
+}
+
+export function readWallet(storage,key=legacyWalletKey) {
+ return storedWallet(storage,key)??cleanWallet(null);
+}
+
+export function readSharedWallet(storage) {
+ const current=storedWallet(storage,sharedWalletKey);
+ if(current)return current;
+ const base=storedWallet(storage,legacyWalletKey);
+ const seasonal=storedWallet(storage,seasonalWalletKey);
+ if(!base || !seasonal)return base??seasonal??cleanWallet(null);
+ // A single balance and active selection come from the old base when both wallets exist.
+ return {...base,owned:[...new Set([...base.owned,...seasonal.owned])]};
+}
 export function saveWallet(storage,wallet,key='blink-market-demo-v1'){try{storage.setItem(key,JSON.stringify(wallet));return true;}catch{return false;}}

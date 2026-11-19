@@ -122,3 +122,37 @@
 .style-detail-image.gta-scene-art[data-style="gta"] .style-art-image {
   inset: 0; width: 100%; height: 100%;
 }
+
+.seasonal-shelf-label { gap: 4px; padding: 0 8px; font-size: 15px }
+.seasonal-shelf-label img { width: 22px; height: 22px; object-fit: contain; transform: rotate(15deg) }
+
+.winter-gallery { --gallery-bottom-space: 0px }
+.winter-gallery:has(.market-pagination) { --gallery-bottom-space: 28px }
+.winter-gallery > .style-art-logo { left: 16px }
+.winter-gallery:has(.seasonal-pager) > .style-art-logo { bottom: 39px }
+.winter-gallery .market-pagination {
+  bottom: 0; height: 28px; align-items: center; pointer-events: none;
+}
+.winter-gallery .market-pagination button { pointer-events: auto; cursor: pointer }
+.winter-gallery .market-pagination button::after { inset: -10px -5px }
+.winter-gallery .market-pagination button:focus-visible { outline: 2px solid white; outline-offset: 4px }
+.winter-gallery .seasonal-detail-badge { top: 11px; left: 10px; width: 73px; transform: rotate(-3deg) }
+.seasonal-detail .style-friends img, .seasonal-detail .style-friends b { scale: .89; border-radius: 13px }
+
+.seasonal-detail.is-vip-locked .style-detail-scroll { bottom: 171px }
+.seasonal-detail.is-vip-locked .style-detail-footer { inset: auto 16px 48px; gap: 0; background: transparent }
+.seasonal-vip-condition {
+  position: relative; width: 100%; height: 60px; display: flex; align-items: flex-start; gap: 12px;
+  padding: 3px 16px 0; color: #fff; font: 600 13px/16px Montserrat,sans-serif;
+}
+.seasonal-vip-condition p { align-self: start; margin: 1px 0 0 }
+.seasonal-vip-wordmark { width: 69px; height: 40px; object-fit: cover; object-position: top }
+.seasonal-vip-star {
+  position: absolute; width: 101px; height: 101px; left: 246px; top: -15px; transform: rotate(15deg);
+}
+.seasonal-detail.is-vip-locked .style-primary { position: relative }
+
+.seasonal-guest-glow {
+  position: absolute; bottom: -16px; left: 0; width: 390px; height: 232px;
+  filter: blur(18px); pointer-events: none;
+}

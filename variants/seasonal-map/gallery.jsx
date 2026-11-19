@@ -37,7 +37,7 @@ export function MapPreviewFrame({style, src, active, pin = true, limited, badge,
   </MapArtwork>;
 }
 
-export function MapPreviewGallery({label, trackLabel, frames, renderFrame, children, className = '', slider = true, previewIndex = 0, previewSelection}) {
+export function MapPreviewGallery({label, trackLabel, frames, renderFrame, children, className = '', slider = true, previewIndex = 0, previewSelection, onPageChange, pagerClass = 'seasonal-pager', pagerLabel = 'Кадры галереи'}) {
   const track = useRef(null);
   const drag = useRef(null);
   const id = useId();
@@ -49,6 +49,14 @@ export function MapPreviewGallery({label, trackLabel, frames, renderFrame, child
     const next = Math.max(0,Math.min(frames.length-1,index));
     viewport.scrollTo({left:next*viewport.clientWidth,behavior:'instant'});
     setPage(next);
+    return next;
+  }
+  function choosePage(index) {
+    const next = goTo(index);
+    onPageChange?.(next);
+  }
+  function pageAt(viewport) {
+    return Math.round(viewport.scrollLeft/viewport.clientWidth);
   }
   useLayoutEffect(()=>{
     if (slider) goTo(previewIndex);
@@ -59,7 +67,7 @@ export function MapPreviewGallery({label, trackLabel, frames, renderFrame, child
     const destinations = {ArrowLeft:page-1,ArrowRight:page+1,Home:0,End:frames.length-1};
     if (!Object.hasOwn(destinations,event.key)) return;
     event.preventDefault();
-    goTo(destinations[event.key]);
+    choosePage(destinations[event.key]);
   }
   function startDrag(event) {
     if (event.pointerType!=='mouse' || event.button!==0 || event.target.closest('button')) return;
@@ -81,13 +89,16 @@ export function MapPreviewGallery({label, trackLabel, frames, renderFrame, child
     drag.current = null;
     const viewport = track.current;
     if (!viewport.hasAttribute('data-dragging')) return;
-    const next = Math.round(viewport.scrollLeft/viewport.clientWidth);
     delete viewport.dataset.dragging;
-    goTo(next);
+    choosePage(pageAt(viewport));
   }
 
   const sliderHandlers = slider ? {
-    onScroll: event=>setPage(Math.round(event.currentTarget.scrollLeft/event.currentTarget.clientWidth)),
+    onScroll: event=>setPage(pageAt(event.currentTarget)),
+    onScrollEnd: onPageChange && (event=>{
+      const next = pageAt(event.currentTarget);
+      if (next!==previewIndex) onPageChange(next);
+    }),
     onKeyDown: keyDown,
     onPointerDown: startDrag,
     onPointerMove: moveDrag,
@@ -109,9 +120,9 @@ export function MapPreviewGallery({label, trackLabel, frames, renderFrame, child
       })}
     </div>
     {children}
-    {slider && <div className="seasonal-pager" role="group" aria-label="Кадры галереи">
+    {slider && <div className={pagerClass} role="group" aria-label={pagerLabel}>
       {frames.map((frame,index)=><button key={frame.label} type="button" aria-label={frame.label}
-        aria-controls={id+'-'+index} aria-pressed={page===index} onClick={()=>goTo(index)}/>)}
+        aria-controls={id+'-'+index} aria-pressed={page===index} onClick={()=>choosePage(index)}/>)}
     </div>}
   </div>;
 }

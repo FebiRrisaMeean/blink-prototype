@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 
 const assets = './assets/';
-export const styleNames = {standard: 'стандарт', gta: 'потрачено', seasonal: 'зима'};
+export const styleNames = {standard: 'стандарт', gta: 'потрачено', seasonal: 'сезоны'};
 export const mapImages = {standard: assets+'map-style-standard.webp', gta: assets+'map-style-gta.webp', seasonal: assets+'map-style-winter.webp'};
 export const appliedMapImages = {gta: assets+'map-style-gta-map.webp', seasonal: assets+'map-style-winter-map.webp'};
 export const seasonalVipBadge = './seasonal-assets/market-vip-badge.png';
@@ -55,12 +55,12 @@ export function useScreenFocus(ref, onClose) {
   }, []);
 }
 
-export function StyleScreen({label, onClose, appearance = 'picker', children, blocked}) {
+export function StyleScreen({label, onClose, appearance = 'picker', children, blocked, className = ''}) {
   const ref = useRef(null);
   useScreenFocus(ref, onClose);
   const sheet = appearance === 'sheet' || appearance === 'settings';
   const hasCloseButton = appearance === 'picker';
-  return <section className={'map-style-screen style-screen-'+appearance} aria-label={label} role="dialog" aria-modal="true" tabIndex={-1} ref={ref} inert={blocked}>
+  return <section className={'map-style-screen style-screen-'+appearance+(className?' '+className:'')} aria-label={label} role="dialog" aria-modal="true" tabIndex={-1} ref={ref} inert={blocked}>
     {appearance !== 'success' && <StatusBar brand={appearance !== 'sheet'}/>}
     <div className="style-screen-panel">
       {sheet ? <button className="style-sheet-handle" aria-label="Закрыть" onClick={onClose}><span/></button> :
@@ -132,13 +132,13 @@ function MapCardArtwork({style, packaged = false, newBadge = false, vipBadge, re
   </div>;
 }
 
-function MapCard({style, price, selected, large, offer, href, vipBadge, subscriptionLabel}) {
+function MapCard({style, price, selected, large, offer, href, vipBadge, subscriptionLabel, subscriptionIcon}) {
   const labelId=subscriptionLabel ? 'style-market-subscription-'+style : undefined;
   return <a className={'style-market-card'+(large?' is-large':'')} href={href} aria-describedby={labelId}
     aria-label={styleNames[style]+(selected?', выбрано':price!=null?', '+price+' блинкоинов':'')}>
     <MapCardArtwork style={style} packaged={offer} newBadge={offer && style==='gta'} vipBadge={vipBadge}/>
     {price != null && <Coin price={price}/>}
-    {subscriptionLabel && <span id={labelId} className="seasonal-shelf-label">{subscriptionLabel}</span>}
+    {subscriptionLabel && <span id={labelId} className="seasonal-shelf-label"><img src={subscriptionIcon} alt=""/>{subscriptionLabel}</span>}
     {selected && <span className="style-chosen"><b aria-hidden="true">✓</b> выбрано</span>}
   </a>;
 }
@@ -150,17 +150,27 @@ export function MapsCatalog({active, wallet, selected, price, seasonal, blocked}
     <div className="style-market-scroll" tabIndex={0} aria-label="Каталог карт">
       <div className={'style-market-offers'+(seasonal?' seasonal-market-offers':'')}>
         {!gtaOwned && <MapCard offer large={!seasonal || seasonal.largeCards.gta} style="gta" price={price} href="#/market/maps/item/maps-0"/>}
-        {seasonal && <MapCard offer large={seasonal.largeCards.seasonal} style="seasonal" selected={selected==='seasonal'} href="#/market/maps/seasonal"
-          vipBadge={selected!=='seasonal' && seasonal.badge} subscriptionLabel={selected!=='seasonal' && seasonal.label}/>}
+        {seasonal && !seasonal.available && <MapCard offer large={seasonal.largeCards.seasonal} style="seasonal" href="#/market/maps/seasonal"
+          vipBadge={seasonal.badge} subscriptionLabel={seasonal.label} subscriptionIcon={seasonal.labelIcon}/>}
       </div>
       <div className="style-collection-copy"><h2>уже у тебя</h2><p>стили карт в коллекции</p></div>
       <div className="style-market-owned">
         <MapCard style="standard" selected={selected==='standard'} href="#/market/maps/standard"/>
         {gtaOwned && <MapCard style="gta" selected={selected==='gta'} href="#/market/maps/item/maps-0"/>}
+        {seasonal?.available && <MapCard style="seasonal" large={seasonal.largeCards.seasonal} selected={selected==='seasonal'} href="#/market/maps/seasonal"/>}
       </div>
     </div>
     <div className="home-indicator"/>
   </section>;
+}
+
+const mapStyleFriends = ['2207c.png','8b5b1.png','d8597.png'].map(src=>assets+src);
+
+export function MapStyleFriends({avatars = mapStyleFriends}) {
+  return <div className="style-friends">
+    <div aria-hidden="true">{avatars.map(src=><img key={src} src={src} alt=""/>)}<b>+42</b></div>
+    <span>есть у 5 друзей</span>
+  </div>;
 }
 
 export function MapStyleDetail({style, canUse, selected, price, theme, setTheme, onApply, onBuy, onClose, blocked, preview}) {
@@ -171,10 +181,7 @@ export function MapStyleDetail({style, canUse, selected, price, theme, setTheme,
       <p className="style-detail-description">{gta ? gtaText : 'стандартная карта Blink'}</p>
       {preview ?? <MapArtwork style={style} className="style-detail-image" src={gta?appliedMapImages.gta:undefined} theme={gta?'light':theme} pin="detail" limited={gta} badge={gta?'только тёмная':'светлая и тёмная'}/>}
       {!gta && <StyleTheme value={theme} onChange={setTheme}/>}
-      <div className="style-friends">
-        <div aria-hidden="true">{['2207c.png','8b5b1.png','d8597.png'].map(src=><img src={assets+src} alt="" key={src}/>)}<b>+42</b></div>
-        <span>есть у 5 друзей</span>
-      </div>
+      <MapStyleFriends/>
     </div>
     <div className="style-detail-footer">
       {selected ? <span className="style-already" role="status">уже выбрано</span> :

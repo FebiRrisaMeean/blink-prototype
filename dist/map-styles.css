@@ -255,7 +255,7 @@
 .interactive-map[data-style="gta"] [data-node-id="I111805:64775;82209:26099"] { left: -40px; top: -35px; width: 470px; height: 914px }
 .interactive-map[data-style="seasonal"] [data-node-id="I111805:64775;82209:26099"] { left: -204px; top: -35px; width: 798px; height: 914px }
 @media (max-width: 840px) {
-  body[data-variant="seasonal"] #root { padding-bottom: 42px }
+  #root:has(.seasonal-controls) { padding-bottom: 42px }
 }
 
 /* Original artwork, geometry and wrapping from the current product frames */

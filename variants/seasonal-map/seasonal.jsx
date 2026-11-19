@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
-import {MapArtworkLogo, mapImages, MapThemeBadge, seasonalVipBadge, StyleScreen, StyleTheme} from '../../map-styles.jsx';
+import {MapArtworkLogo, mapImages, MapStyleFriends, MapThemeBadge, seasonalVipBadge, StyleScreen, StyleTheme} from '../../map-styles.jsx';
 import {MapPreviewFrame, MapPreviewGallery, PreviewLoadError, retrySource} from './gallery.jsx';
 
 const sessionKey = 'blink-seasonal-map-v1';
@@ -7,13 +7,16 @@ const delay = 600;
 const defaultLargeCards = {gta: false, seasonal: false};
 const baseState = {vip: 'none', applied: false, gallerySlider: false, largeCards: defaultLargeCards};
 const seasonalAssets = './seasonal-assets/';
+const detailAssets = seasonalAssets+'winter-detail/';
+const seasonalFriends = ['91715.jpg','81587.png','207a3.jpg'].map(src=>detailAssets+src);
+const vipStar = detailAssets+'858c6.png';
 const previews = [
   {label:'светлая карта', effect:'snow', poster:'winter-gallery-day.webp', animation:'winter-gallery-snow.webp'},
   {label:'тёмная карта', effect:'lights', poster:'winter-gallery-night.webp', animation:'winter-gallery-lights.webp'},
 ];
 
 export function seasonalOffer(scenario) {
-  return {badge:seasonalVipBadge, label:scenario.vip?'бесплатно':'blink vip', largeCards:scenario.largeCards};
+  return {available:scenario.vip, badge:seasonalVipBadge, label:'Blink VIP', labelIcon:vipStar, largeCards:scenario.largeCards};
 }
 
 function initialState() {
@@ -170,6 +173,7 @@ function useMediaQuery(query) {
 
 function WinterGallery({scenario, theme, onThemeChange}) {
   const [themeClicks,setThemeClicks] = useState(0);
+  const guest = !scenario.vip;
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const darkDevice = useMediaQuery('(prefers-color-scheme: dark)');
   const themePage = theme==='dark' || theme==='system' && darkDevice ? 1 : 0;
@@ -181,15 +185,18 @@ function WinterGallery({scenario, theme, onThemeChange}) {
 
   return <>
     <MapPreviewGallery label="Галерея зимней карты" trackLabel="Превью зимней карты" frames={previews}
-      slider={scenario.gallerySlider} previewIndex={themePage} previewSelection={themeClicks}
+      className="winter-gallery"
+      slider={guest || scenario.gallerySlider} previewIndex={themePage} previewSelection={themeClicks}
+      pagerClass={guest?'market-pagination':undefined} pagerLabel={guest?'Превью темы карты':undefined}
+      onPageChange={guest?index=>onThemeChange(index===0?'light':'dark'):undefined}
       renderFrame={(preview,active)=><MapPreviewFrame style="seasonal" src={seasonalAssets+preview.poster} active={active}>
         {!reducedMotion && <GalleryAnimation preview={preview} takeFailure={scenario.takeFailure}/>}
       </MapPreviewFrame>}>
       <MapArtworkLogo/>
       <MapThemeBadge>светлая и тёмная</MapThemeBadge>
-      {!scenario.applied && <img className="seasonal-detail-badge" src={seasonalVipBadge} alt="Blink VIP"/>}
+      {guest && <img className="seasonal-detail-badge" src={seasonalVipBadge} alt="Blink VIP"/>}
     </MapPreviewGallery>
-    <StyleTheme value={theme} onChange={chooseTheme}/>
+    {!guest && <StyleTheme value={theme} onChange={chooseTheme}/>}
   </>;
 }
 
@@ -197,17 +204,27 @@ export function SeasonalDetail({scenario, theme, onThemeChange, onApplyTheme, on
   const themeForApply = useRef(theme);
   themeForApply.current = theme;
   const apply = ()=>scenario.apply(()=>onApplyTheme(themeForApply.current));
-  return <StyleScreen label="Зима · стиль карты" appearance="sheet" onClose={onClose}>
+  const guest = !scenario.vip;
+  return <StyleScreen label="Сезоны · стиль карты" appearance="sheet" className={'seasonal-detail'+(guest?' is-vip-locked':'')} onClose={onClose}>
+    {guest && <img className="seasonal-guest-glow" src={detailAssets+'vip-glow.svg'} alt=""/>}
     <div className="style-detail-scroll">
-      <h1>зима</h1>
-      <p className="style-detail-description">сезонный стиль Blink. карта меняется вместе со временем года</p>
+      <h1>сезоны</h1>
+      <p className="style-detail-description">за окном новый сезон — на карте<br/>новый стиль</p>
       <WinterGallery scenario={scenario} theme={theme} onThemeChange={onThemeChange}/>
+      <MapStyleFriends avatars={seasonalFriends}/>
       <SeasonalApplyMessage scenario={scenario} onRetry={apply}/>
     </div>
     <div className="style-detail-footer">
       {scenario.applied ? <span className="style-already" role="status">уже выбрано</span> :
       scenario.vip ? <button className="style-primary" disabled={scenario.applyStatus!=='idle'} onClick={apply}>{scenario.applyStatus==='loading'?'загружаем стиль…':'применить'}</button> :
-        <a className="style-primary" href={'#/market/maps/vip'+(settingsOrigin?'/'+settingsOrigin:'')}>получить с Blink VIP</a>}
+        <>
+          <div className="seasonal-vip-condition" id="seasonal-vip-condition">
+            <img className="seasonal-vip-wordmark" src={detailAssets+'4b886.png'} alt=""/>
+            <p>доступно только<br/>для подписчиков</p>
+            <img className="seasonal-vip-star" src={vipStar} alt=""/>
+          </div>
+          <a className="style-primary" href={'#/market/maps/vip'+(settingsOrigin?'/'+settingsOrigin:'')} aria-describedby="seasonal-vip-condition">получить с Blink VIP</a>
+        </>}
     </div>
   </StyleScreen>;
 }

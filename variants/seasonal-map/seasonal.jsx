@@ -1,19 +1,19 @@
-import React, {useEffect, useId, useLayoutEffect, useRef, useState} from 'react';
-import {MapArtwork, MapArtworkLogo, mapImages, MapThemeBadge, StyleScreen, StyleTheme} from '../../map-styles.jsx';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import {MapArtworkLogo, mapImages, MapThemeBadge, seasonalVipBadge, StyleScreen, StyleTheme} from '../../map-styles.jsx';
+import {MapPreviewFrame, MapPreviewGallery, PreviewLoadError, retrySource} from './gallery.jsx';
 
 const sessionKey = 'blink-seasonal-map-v1';
 const delay = 600;
 const defaultLargeCards = {gta: false, seasonal: false};
 const baseState = {vip: 'none', applied: false, gallerySlider: false, largeCards: defaultLargeCards};
 const seasonalAssets = './seasonal-assets/';
-const vipBadge = seasonalAssets+'market-vip-badge.png';
 const previews = [
   {label:'светлая карта', effect:'snow', poster:'winter-gallery-day.webp', animation:'winter-gallery-snow.webp'},
   {label:'тёмная карта', effect:'lights', poster:'winter-gallery-night.webp', animation:'winter-gallery-lights.webp'},
 ];
 
 export function seasonalOffer(scenario) {
-  return {badge:vipBadge, label:scenario.vip?'бесплатно':'blink vip', largeCards:scenario.largeCards};
+  return {badge:seasonalVipBadge, label:scenario.vip?'бесплатно':'blink vip', largeCards:scenario.largeCards};
 }
 
 function initialState() {
@@ -29,8 +29,6 @@ function initialState() {
   } catch {}
   return baseState;
 }
-
-const retrySource = (src, count) => count ? src+'?retry='+count : src;
 
 async function loadArtwork(src, fail) {
   const image = new Image();
@@ -133,20 +131,6 @@ export function SeasonalApplyMessage({scenario, onRetry=()=>scenario.apply()}) {
   return null;
 }
 
-function PreviewLoadError({retry}) {
-  return <div className="seasonal-preview-status" role="alert">
-    не удалось загрузить превью<button type="button" className="style-retry" onClick={retry}>повторить</button>
-  </div>;
-}
-
-function PreviewLoader() {
-  return <div className="seasonal-gallery-loader" role="status" aria-label="Загрузка превью">
-    <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
-      <g><circle cx="20" cy="20" r="18.5" pathLength="360"/></g>
-    </svg>
-  </div>;
-}
-
 function GalleryAnimation({preview, takeFailure}) {
   const [attempt,setAttempt] = useState(0);
   const [status,setStatus] = useState('loading');
@@ -172,25 +156,6 @@ function GalleryAnimation({preview, takeFailure}) {
     onLoad={()=>{if (!simulatedFailure.current) setStatus('loaded');}} onError={()=>setStatus('error')}/>;
 }
 
-function GalleryPreview({preview, active, reducedMotion, takeFailure}) {
-  const [attempt,setAttempt] = useState(0);
-  const [status,setStatus] = useState('loading');
-  const ready = status==='loaded';
-
-  function retry() {
-    setStatus('loading');
-    setAttempt(count=>count+1);
-  }
-
-  return <MapArtwork style="seasonal" className={'style-detail-image seasonal-gallery-art'+(ready?'':' is-awaiting-poster')}
-    src={retrySource(seasonalAssets+preview.poster,attempt)} pin={ready && 'detail'} showLogo={false}
-    onImageLoad={()=>setStatus('loaded')} onImageError={()=>setStatus('error')}>
-    {active && status==='loading' && <PreviewLoader/>}
-    {active && status==='error' && <PreviewLoadError retry={retry}/>}
-    {active && ready && !reducedMotion && <GalleryAnimation preview={preview} takeFailure={takeFailure}/>}
-  </MapArtwork>;
-}
-
 function useMediaQuery(query) {
   const [matches,setMatches] = useState(()=>matchMedia(query).matches);
   useEffect(()=>{
@@ -204,93 +169,27 @@ function useMediaQuery(query) {
 }
 
 function WinterGallery({scenario, theme, onThemeChange}) {
-  const track = useRef(null);
-  const drag = useRef(null);
-  const id = useId();
-  const [page,setPage] = useState(0);
-  const slider = scenario.gallerySlider;
+  const [themeClicks,setThemeClicks] = useState(0);
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const darkDevice = useMediaQuery('(prefers-color-scheme: dark)');
   const themePage = theme==='dark' || theme==='system' && darkDevice ? 1 : 0;
-  const activePage = slider?page:themePage;
-
-  function goTo(index) {
-    const viewport = track.current;
-    const next = Math.max(0,Math.min(previews.length-1,index));
-    viewport.scrollTo({left:next*viewport.clientWidth,behavior:'instant'});
-    setPage(next);
-  }
-  useLayoutEffect(()=>{
-    if (slider) goTo(themePage);
-  },[slider,theme,themePage]);
 
   function chooseTheme(value) {
-    if (slider && value===theme) goTo(themePage);
+    if (scenario.gallerySlider) setThemeClicks(count=>count+1);
     onThemeChange(value);
   }
-  function keyDown(event) {
-    if (event.target!==track.current) return;
-    const destinations = {ArrowLeft:page-1,ArrowRight:page+1,Home:0,End:previews.length-1};
-    if (!Object.hasOwn(destinations,event.key)) return;
-    event.preventDefault();
-    goTo(destinations[event.key]);
-  }
-  function startDrag(event) {
-    if (event.pointerType!=='mouse' || event.button!==0 || event.target.closest('button')) return;
-    const viewport = track.current;
-    drag.current = {id:event.pointerId,x:event.clientX,position:viewport.scrollLeft,scale:viewport.getBoundingClientRect().width/viewport.clientWidth};
-  }
-  function moveDrag(event) {
-    const gesture = drag.current;
-    if (!gesture || event.pointerId!==gesture.id) return;
-    const viewport = track.current;
-    const distance = (event.clientX-gesture.x)/gesture.scale;
-    if (!viewport.hasPointerCapture(event.pointerId) && Math.abs(distance)<5) return;
-    viewport.setPointerCapture(event.pointerId);
-    viewport.dataset.dragging = '';
-    viewport.scrollLeft = gesture.position-distance;
-  }
-  function endDrag(event) {
-    if (drag.current?.id!==event.pointerId) return;
-    drag.current = null;
-    const viewport = track.current;
-    if (!viewport.hasAttribute('data-dragging')) return;
-    const next = Math.round(viewport.scrollLeft/viewport.clientWidth);
-    delete viewport.dataset.dragging;
-    goTo(next);
-  }
 
-  const sliderHandlers = slider ? {
-    onScroll: event=>setPage(Math.round(event.currentTarget.scrollLeft/event.currentTarget.clientWidth)),
-    onKeyDown: keyDown,
-    onPointerDown: startDrag,
-    onPointerMove: moveDrag,
-    onPointerUp: endDrag,
-    onPointerCancel: endDrag,
-    onPointerLeave: event=>{if(!track.current.hasPointerCapture(event.pointerId))endDrag(event);},
-  } : {};
-
-  return <><div className="seasonal-preview" role="group" aria-label="Галерея зимней карты">
-    <div className={'seasonal-gallery-track'+(slider?'':' is-static-preview')} tabIndex={slider?0:undefined}
-      aria-label="Превью зимней карты" ref={track} {...sliderHandlers}>
-      {previews.map((preview,index)=>{
-        const active = index===activePage;
-        return <div className="seasonal-gallery-page" key={preview.effect} id={id+'-'+index} role="group"
-          aria-roledescription={slider?'слайд':undefined}
-          aria-label={preview.label+(slider?', '+(index+1)+' из '+previews.length:'')} aria-hidden={!active}>
-          <GalleryPreview preview={preview} active={active} reducedMotion={reducedMotion} takeFailure={scenario.takeFailure}/>
-        </div>;
-      })}
-    </div>
-    <MapArtworkLogo/>
-    <MapThemeBadge>светлая и тёмная</MapThemeBadge>
-    {!scenario.applied && <img className="seasonal-detail-badge" src={vipBadge} alt="Blink VIP"/>}
-    {slider && <div className="seasonal-pager" role="group" aria-label="Кадры галереи">
-      {previews.map((preview,index)=><button key={preview.effect} type="button" aria-label={preview.label}
-        aria-controls={id+'-'+index} aria-pressed={page===index} onClick={()=>goTo(index)}/>)}
-    </div>}
-  </div>
-  <StyleTheme value={theme} onChange={chooseTheme}/>
+  return <>
+    <MapPreviewGallery label="Галерея зимней карты" trackLabel="Превью зимней карты" frames={previews}
+      slider={scenario.gallerySlider} previewIndex={themePage} previewSelection={themeClicks}
+      renderFrame={(preview,active)=><MapPreviewFrame style="seasonal" src={seasonalAssets+preview.poster} active={active}>
+        {!reducedMotion && <GalleryAnimation preview={preview} takeFailure={scenario.takeFailure}/>}
+      </MapPreviewFrame>}>
+      <MapArtworkLogo/>
+      <MapThemeBadge>светлая и тёмная</MapThemeBadge>
+      {!scenario.applied && <img className="seasonal-detail-badge" src={seasonalVipBadge} alt="Blink VIP"/>}
+    </MapPreviewGallery>
+    <StyleTheme value={theme} onChange={chooseTheme}/>
   </>;
 }
 

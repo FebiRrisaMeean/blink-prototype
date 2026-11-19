@@ -13,6 +13,7 @@ import {ModalSheet as CoinPackSheet} from './.generated/coin-packs.tsx';
 import {productNames as names,giftImages,stickerSlides,product,productById,purchase,topUp,coinPacks} from './market-model.mjs';
 import {GtaSuccess, MapsCatalog, MapStyleDetail, ownsGta, setPermanentStyle} from './map-styles.jsx';
 import {SeasonalDetail, seasonalOffer} from './variants/seasonal-map/seasonal.jsx';
+import {GtaGallery} from './variants/seasonal-map/gallery.jsx';
 import VipFlow from './variants/seasonal-map/vip.jsx';
 
 const categories=[['stickers','стикеры',Stickers],['tails','хвосты',Tails],['maps','карты',null],['gifts','подарки',Gifts]];
@@ -156,7 +157,8 @@ export default function Market({wallet,setWallet,selected:mapStyle,theme,setThem
  <nav className="market-categories" aria-label="Разделы маркета" inert={hasDetail||!!sheet} aria-hidden={hasDetail||!!sheet||undefined}>{categories.map(([id,label])=><a href={'#/market/'+id} key={id} aria-current={category===id?'page':undefined}>{label}</a>)}</nav>
  {mapSuccess&&gta?<GtaSuccess onClose={close}/>:(gta||standard)&&
    <MapStyleDetail key={gta?'gta':'standard'} style={gta?'gta':'standard'} canUse={!gta||ownsGta(wallet)} selected={mapStyle===(gta?'gta':'standard')} price={gtaOffer.price}
-    theme={theme} setTheme={setTheme} onClose={close} onApply={()=>selectPermanent(gta?'gta':'standard')} onBuy={()=>buy(gtaOffer)} blocked={!!sheet}/>}
+    theme={theme} setTheme={setTheme} onClose={close} onApply={()=>selectPermanent(gta?'gta':'standard')} onBuy={()=>buy(gtaOffer)}
+    blocked={!!sheet} preview={gta&&scenario.enabled?<GtaGallery/>:null}/>}
  {seasonalPage&&page==='seasonal'&&<SeasonalDetail scenario={scenario} theme={scenario.applied?theme:previewTheme??theme}
     onThemeChange={scenario.applied?setTheme:setPreviewTheme} onApplyTheme={value=>{setTheme(value);setPreviewTheme(null);}}
     onClose={close} settingsOrigin={fromSettings?settingsOrigin:''}/>}

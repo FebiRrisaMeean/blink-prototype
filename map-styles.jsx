@@ -4,6 +4,7 @@ const assets = './assets/';
 export const styleNames = {standard: 'стандарт', gta: 'потрачено', seasonal: 'зима'};
 export const mapImages = {standard: assets+'map-style-standard.webp', gta: assets+'map-style-gta.webp', seasonal: assets+'map-style-winter.webp'};
 export const appliedMapImages = {gta: assets+'map-style-gta-map.webp', seasonal: assets+'map-style-winter-map.webp'};
+export const seasonalVipBadge = './seasonal-assets/market-vip-badge.png';
 const coverImages = {...mapImages, seasonal: assets+'map-style-winter-cover.webp'};
 const themes = [['light', 'светлый'], ['dark', 'тёмный'], ['system', 'системный']];
 const gtaText = 'первый стиль карты Blink в духе GTA. в главных ролях — ты и твои друзья';
@@ -162,13 +163,13 @@ export function MapsCatalog({active, wallet, selected, price, seasonal, blocked}
   </section>;
 }
 
-export function MapStyleDetail({style, canUse, selected, price, theme, setTheme, onApply, onBuy, onClose, blocked}) {
+export function MapStyleDetail({style, canUse, selected, price, theme, setTheme, onApply, onBuy, onClose, blocked, preview}) {
   const gta = style === 'gta';
   return <StyleScreen label={styleNames[style]} onClose={onClose} appearance="sheet" blocked={blocked}>
     <div className="style-detail-scroll">
       <h1>{styleNames[style]}</h1>
       <p className="style-detail-description">{gta ? gtaText : 'стандартная карта Blink'}</p>
-      <MapArtwork style={style} className="style-detail-image" src={gta?appliedMapImages.gta:undefined} theme={gta?'light':theme} pin="detail" limited={gta} badge={gta?'только тёмная':'светлая и тёмная'}/>
+      {preview ?? <MapArtwork style={style} className="style-detail-image" src={gta?appliedMapImages.gta:undefined} theme={gta?'light':theme} pin="detail" limited={gta} badge={gta?'только тёмная':'светлая и тёмная'}/>}
       {!gta && <StyleTheme value={theme} onChange={setTheme}/>}
       <div className="style-friends">
         <div aria-hidden="true">{['2207c.png','8b5b1.png','d8597.png'].map(src=><img src={assets+src} alt="" key={src}/>)}<b>+42</b></div>
@@ -218,7 +219,8 @@ export function MapStyleSettings({wallet, selected, price, theme, setTheme, seas
           return <button type="button" key={style} disabled={style==='seasonal' && applyStatus==='loading'} aria-label={name+(isGtaOffer?', купить':isSeasonLocked?', закрыто':'')} aria-pressed={chosen} onClick={choose}>
             <MapArtwork style={style}/>
             {isGtaOffer && <Coin price={price}/>}
-            {isSeasonLocked && <span className="style-lock" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M4.5 7V5a3.5 3.5 0 017 0v2h1v7h-9V7zM6 7h4V5a2 2 0 00-4 0z" fill="currentColor"/></svg></span>}
+            {isSeasonLocked && (seasonal ? <img className="style-picker-vip-badge" src={seasonalVipBadge} alt=""/> :
+              <span className="style-lock" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M4.5 7V5a3.5 3.5 0 017 0v2h1v7h-9V7zM6 7h4V5a2 2 0 00-4 0z" fill="currentColor"/></svg></span>)}
             <span>{name}</span>
           </button>;
         })}
